@@ -25,13 +25,110 @@ body{
   --text-2:#AAA39A;
   --border:rgba(243,240,234,.10);
   --tile-ar:16/9;
+  --ease-out:cubic-bezier(.16,1,.3,1);
   color:#F3F0EA;
   font-family:'Inter',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 a{color:var(--accent);text-decoration:none}
 a:hover{color:var(--text)}
+
+/* Feedback: every interactive/bordered element gets a smooth transition instead of snapping on hover */
+a,button,article,[data-play-badge]{transition:color .2s ease,background-color .2s ease,border-color .2s ease,transform .2s var(--ease-out),opacity .2s ease}
+a:hover [data-play-badge]{transform:scale(1.12)}
+
 @keyframes recedScroll{0%{transform:translateY(0);opacity:.2}50%{transform:translateY(7px);opacity:1}100%{transform:translateY(0);opacity:.2}}
+@keyframes recedRise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recedLineY{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
+@keyframes recedTileIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Focal moment: hero content rises like stage lights coming up, one beat after another */
+.reced-hero-in>*{animation:recedRise .7s var(--ease-out) both}
+.reced-hero-in>*:nth-child(1){animation-delay:.05s}
+.reced-hero-in>*:nth-child(2){animation-delay:.18s}
+.reced-hero-in>*:nth-child(3){animation-delay:.3s}
+.reced-hero-in>*:nth-child(4){animation-delay:.42s}
+.reced-hero-side>*{animation:recedRise .7s var(--ease-out) both}
+.reced-hero-side>*:nth-child(1){animation-delay:.3s}
+.reced-hero-side>*:nth-child(2){animation-delay:.42s}
+/* the accent line settles last, like a spotlight locking on */
+.reced-line-y{transform-origin:top;animation:recedLineY .8s .58s var(--ease-out) both}
+
+/* Continuity: sections announce themselves once as they enter the viewport */
+.reveal{opacity:0;transform:translateY(24px)}
+.reveal.is-visible{animation:recedRise .7s var(--ease-out) forwards}
+.reveal-stagger>*{opacity:0;transform:translateY(24px)}
+.reveal-stagger.is-visible>*{animation:recedRise .6s var(--ease-out) forwards}
+.reveal-stagger.is-visible>*:nth-child(1){animation-delay:0s}
+.reveal-stagger.is-visible>*:nth-child(2){animation-delay:.09s}
+.reveal-stagger.is-visible>*:nth-child(3){animation-delay:.18s}
+.reveal-stagger.is-visible>*:nth-child(4){animation-delay:.27s}
+
+/* Portfolio tiles replay their entrance on every filter cut, like an edit cut */
+.reced-tile{animation:recedTileIn .5s var(--ease-out) both}
+
+/* Delight: an unfilled media slot reads as a stage on standby, not a broken placeholder —
+   a slow accent breath echoing The Dark Stage north star and hesed's steadiness. */
+image-slot{color:var(--accent)}
+image-slot::part(ring){border-color:var(--accent);animation:recedStandbyRing 4s ease-in-out infinite}
+image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
+@keyframes recedStandbyRing{0%,100%{opacity:.22}50%{opacity:.48}}
+@keyframes recedStandbyGlow{
+  0%,100%{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%)}
+  50%{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 26%,transparent),transparent 70%)}
+}
+
+/* Delight: the isolated "Hesed" signature reveals the word's meaning on discovery —
+   the story already told in Sobre, resurfaced where curiosity strikes. */
+.reced-hesed-mark{position:relative;cursor:help}
+.reced-hesed-mark::after{
+  content:attr(data-hesed-meaning);
+  position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%) translateY(4px);
+  width:max-content;max-width:230px;
+  background:var(--bg-elev);color:var(--text-2);border:1px solid var(--border);border-radius:3px;
+  padding:12px 16px;font-family:'Inter',sans-serif;font-size:11px;font-style:normal;font-weight:400;
+  letter-spacing:.02em;line-height:1.55;text-transform:none;
+  opacity:0;pointer-events:none;box-shadow:0 12px 32px rgba(0,0,0,.4);z-index:5;
+  transition:opacity .2s ease,transform .2s var(--ease-out);
+}
+.reced-hesed-mark::before{
+  content:'';position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%) translateY(4px);
+  border:6px solid transparent;border-top-color:var(--bg-elev);
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s var(--ease-out);
+}
+.reced-hesed-mark:hover::after,.reced-hesed-mark:focus-visible::after,
+.reced-hesed-mark:hover::before,.reced-hesed-mark:focus-visible::before{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
+
+/* Overdrive: a warm follow-spot tracks the cursor across the hero, like a light
+   finding you on a dark stage. Pure transform (compositor-only) — cheap at 60fps. */
+.reced-spotlight{
+  position:absolute;top:0;left:0;z-index:1;pointer-events:none;
+  width:min(70vw,820px);height:min(70vw,820px);border-radius:50%;
+  background:radial-gradient(circle,
+    color-mix(in srgb,var(--accent) 55%,transparent) 0%,
+    color-mix(in srgb,var(--accent) 16%,transparent) 34%,
+    transparent 68%);
+  mix-blend-mode:screen;opacity:0;
+  transform:translate3d(-9999px,-9999px,0);
+  transition:opacity .6s ease;
+  will-change:transform;
+}
+.reced-spotlight.is-active{opacity:.55}
+.reced-spotlight.reced-spotlight--idle{opacity:.4;animation:recedSpotDrift 16s ease-in-out infinite}
+@keyframes recedSpotDrift{
+  0%,100%{transform:translate3d(calc(35vw - 50%),calc(30vh - 50%),0)}
+  50%{transform:translate3d(calc(55vw - 50%),calc(45vh - 50%),0)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .reced-hero-in>*,.reced-hero-side>*,.reced-line-y,.reveal,.reveal-stagger>*,.reced-tile{animation:none!important;opacity:1!important;transform:none!important}
+  a:hover [data-play-badge]{transform:none}
+  .reced-scroll-cue{animation:none!important;opacity:.5!important}
+  image-slot::part(ring),image-slot::part(empty){animation:none!important}
+  .reced-spotlight{display:none!important}
+}
 </style>
 </helmet>
 
@@ -51,35 +148,40 @@ a:hover{color:var(--text)}
 
 <section id="hero" data-screen-label="Hero" style="position:relative;min-height:min(88vh,760px);display:flex;align-items:flex-end;overflow:hidden">
   <div style="position:absolute;inset:0">
-    <image-slot id="reced-hero" shape="rect" placeholder="Foto de palco / show ao vivo (fundo do hero)"></image-slot>
+    <image-slot id="reced-hero" shape="rect" src="./uploads/RECED/hero.png" placeholder="Foto de palco / show ao vivo (fundo do hero)"></image-slot>
   </div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,rgba(13,12,11,.95) 12%,rgba(13,12,11,.72) 48%,rgba(13,12,11,.35) 100%)"></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--bg) 2%,rgba(13,12,11,0) 38%)"></div>
+  <div class="reced-spotlight" aria-hidden="true"></div>
 
-  <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;width:100%;padding:clamp(48px,8vw,104px) clamp(20px,5vw,64px) clamp(44px,6vw,72px)">
-    <div style="max-width:720px;display:flex;flex-direction:column;gap:26px">
+  <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;width:100%;padding:clamp(48px,8vw,104px) clamp(20px,5vw,64px) clamp(44px,6vw,72px)">
+    <div class="reced-hero-in" style="max-width:720px;display:flex;flex-direction:column;gap:26px">
       <h1 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.6rem,6.4vw,5.2rem);line-height:.95;letter-spacing:-.01em;text-wrap:balance">SONS<br>QUE <span style="color:var(--accent)">TRANSFORMAM.</span></h1>
       <div style="font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2)">Música &nbsp;·&nbsp; Vídeo &nbsp;·&nbsp; Experiências</div>
       <p style="margin:0;max-width:420px;font-size:15px;line-height:1.7;color:var(--text-2)">Produção audiovisual com propósito. Excelência técnica a serviço da mensagem.</p>
       <a href="#portfolio" style="display:flex;align-items:center;gap:16px;color:var(--text)" style-hover="color:var(--accent)">
-        <span style="display:grid;place-items:center;width:54px;height:54px;border:1px solid var(--accent);border-radius:50%;color:var(--accent)">
+        <span data-play-badge style="display:grid;place-items:center;width:54px;height:54px;border:1px solid var(--accent);border-radius:50%;color:var(--accent)">
           <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0l14 8-14 8z"></path></svg>
         </span>
         <span style="font-size:11px;letter-spacing:.22em;text-transform:uppercase">Assistir ao vídeo</span>
       </a>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right;flex:none">
+    <div class="reced-hero-side" style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right;flex:none">
       <div style="font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--accent)">Hesed</div>
       <div style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);line-height:1.9">Amor leal.<br>Sempre.</div>
-      <div style="width:1px;height:70px;background:linear-gradient(to bottom,var(--accent),transparent);margin-top:12px"></div>
+      <div class="reced-line-y" style="width:1px;height:70px;background:linear-gradient(to bottom,var(--accent),transparent);margin-top:12px"></div>
     </div>
+  </div>
+  <div class="reced-scroll-cue" style="position:absolute;left:50%;bottom:20px;transform:translateX(-50%);animation:recedScroll 1.8s ease-in-out infinite;color:var(--text-2)" aria-hidden="true">
+    <svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="1" y="1" width="12" height="20" rx="6"></rect><line x1="7" y1="6" x2="7" y2="10"></line></svg>
   </div>
 </section>
 
 <section id="sobre" data-screen-label="Sobre" style="padding:clamp(80px,10vw,128px) clamp(20px,5vw,64px);display:flex;flex-direction:column;gap:clamp(56px,7vw,88px)">
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(32px,5vw,72px);align-items:center">
+  <div class="reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(32px,5vw,72px);align-items:center">
     <div style="position:relative;aspect-ratio:4/3;border-radius:3px;overflow:hidden">
-      <image-slot id="reced-sobre" shape="rect" placeholder="Bastidores — mesa de som / estúdio"></image-slot>
+      <image-slot id="reced-sobre" shape="rect" src="./uploads/RECED/Proposito%20a.png" placeholder="Bastidores — mesa de som / estúdio"></image-slot>
+      <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to right,transparent 72%,var(--bg) 100%)"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:24px;max-width:560px">
       <div style="font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent)">Sobre nós</div>
@@ -89,33 +191,38 @@ a:hover{color:var(--text)}
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(24px,4vw,56px);border-top:1px solid var(--border);padding-top:clamp(32px,4vw,48px)">
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><path d="M3 12v2M7 8v10M11 4v16M15 9v7M19 12v3M23 11v4"></path></svg>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase">Propósito</div>
-      <p style="margin:0;font-size:14px;line-height:1.65;color:var(--text-2)">Adoração que alcança pessoas.</p>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="8" r="3.4"></circle><path d="M4.5 20c.9-3.8 3.9-5.6 7.5-5.6S18.6 16.2 19.5 20"></path></svg>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase">Excelência</div>
-      <p style="margin:0;font-size:14px;line-height:1.65;color:var(--text-2)">Qualidade técnica em cada detalhe.</p>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"></path></svg>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase">Impacto</div>
-      <p style="margin:0;font-size:14px;line-height:1.65;color:var(--text-2)">Conteúdo que transforma vidas.</p>
-    </div>
-  </div>
+  <div class="reveal" style="position:relative;border-radius:3px;overflow:hidden;display:flex;flex-direction:column;gap:clamp(40px,5vw,64px);padding:clamp(32px,4vw,48px) clamp(20px,5vw,64px) clamp(48px,6vw,72px)">
+    <div style="position:absolute;inset:0"><image-slot id="reced-proposito" shape="rect" src="./uploads/RECED/Proposito%20b.png" placeholder="Plateia em adoração, mãos levantadas"></image-slot></div>
+    <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,var(--bg) 0%,transparent 14%),linear-gradient(to bottom,rgba(15,10,8,.62) 0%,rgba(15,10,8,.72) 55%,rgba(15,10,8,.85) 100%)"></div>
 
-  <blockquote style="margin:0;text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(1.2rem,2.6vw,2rem);letter-spacing:.06em;color:var(--text)">“A arte também é adoração.”</blockquote>
+    <div class="reveal-stagger" style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(24px,4vw,56px)">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><path d="M3 12v2M7 8v10M11 4v16M15 9v7M19 12v3M23 11v4"></path></svg>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--text)">Propósito</div>
+        <p style="margin:0;font-size:14px;line-height:1.65;color:var(--text-2)">Adoração que alcança pessoas.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;border-left:1px solid var(--border);padding-left:clamp(24px,4vw,56px)">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="8" r="3.4"></circle><path d="M4.5 20c.9-3.8 3.9-5.6 7.5-5.6S18.6 16.2 19.5 20"></path></svg>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--text)">Excelência</div>
+        <p style="margin:0;font-size:14px;line-height:1.65;color:var(--text-2)">Qualidade técnica em cada detalhe.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;border-left:1px solid var(--border);padding-left:clamp(24px,4vw,56px)">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"></path></svg>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--text)">Impacto</div>
+        <p style="margin:0;font-size:14px;line-height:1.65;color:var(--text-2)">Conteúdo que transforma vidas.</p>
+      </div>
+    </div>
+
+    <blockquote style="position:relative;z-index:1;margin:0;max-width:480px;text-align:left;font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(1.2rem,2.6vw,2rem);letter-spacing:.06em;color:var(--text)">“A arte também é adoração.”</blockquote>
+  </div>
 </section>
 
 <section id="servicos" data-screen-label="Serviços" style="background:var(--bg-surface);padding:clamp(80px,10vw,128px) clamp(20px,5vw,64px);display:flex;flex-direction:column;gap:clamp(40px,5vw,64px)">
-  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
+  <div class="reveal" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
     <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,3.2rem);line-height:1.02">NOSSOS<br>SERVIÇOS</h2>
     <div style="font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--text-2);text-align:right;line-height:2">Soluções audiovisuais<br>com propósito</div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:20px">
+  <div class="reveal-stagger" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:20px">
     <article style="display:flex;flex-direction:column;background:var(--bg-elev);border:1px solid var(--border);border-radius:3px;overflow:hidden" style-hover="border-color:var(--accent)">
       <div style="aspect-ratio:4/3"><image-slot id="reced-serv-1" shape="rect" placeholder="Clipe musical"></image-slot></div>
       <div style="display:flex;flex-direction:column;gap:12px;padding:24px">
@@ -156,7 +263,7 @@ a:hover{color:var(--text)}
 </section>
 
 <section id="portfolio" data-screen-label="Portfólio" style="padding:clamp(80px,10vw,128px) clamp(20px,5vw,64px);display:flex;flex-direction:column;gap:clamp(32px,4vw,48px)">
-  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
+  <div class="reveal" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
     <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,3.2rem);line-height:1">PORTFÓLIO</h2>
     <div style="font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--text-2);text-align:right;line-height:2">Histórias reais.<br>Impacto verdadeiro.</div>
   </div>
@@ -169,14 +276,14 @@ a:hover{color:var(--text)}
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:20px">
     <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
-      <a href="#portfolio" style="position:relative;display:block;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev)" style-hover="border-color:var(--accent)">
+      <a href="#portfolio" class="reced-tile" style="position:relative;display:block;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev)" style-hover="border-color:var(--accent)">
         <div style="aspect-ratio:var(--tile-ar)"><image-slot id="{{ it.slot }}" shape="rect" placeholder="{{ it.placeholder }}"></image-slot></div>
         <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:18px 18px 16px;pointer-events:none;background:linear-gradient(to top,rgba(13,12,11,.92),rgba(13,12,11,0))">
           <div style="display:flex;flex-direction:column;gap:5px">
             <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text)">{{ it.title }}</div>
             <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)">{{ it.kind }}</div>
           </div>
-          <span style="flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--bg)">
+          <span data-play-badge style="flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--bg)">
             <svg width="10" height="11" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0l14 8-14 8z"></path></svg>
           </span>
         </div>
@@ -184,10 +291,10 @@ a:hover{color:var(--text)}
     </sc-for>
   </div>
 
-  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px">
+  <div class="reveal" style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px">
     <a href="#contato" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);border:1px solid var(--border);padding:15px 26px;border-radius:2px" style-hover="border-color:var(--accent);color:var(--accent)">Ver todos os projetos →</a>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.2rem);color:var(--accent);line-height:1">Hesed</div>
+      <div class="reced-hesed-mark" tabindex="0" data-hesed-meaning="Do hebraico ḥesed: o amor leal, constante e misericordioso de Deus." style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.2rem);color:var(--accent);line-height:1">Hesed</div>
       <div style="font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-2)">Amor leal. Sempre.</div>
     </div>
   </div>
@@ -195,11 +302,11 @@ a:hover{color:var(--text)}
 
 <sc-if value="{{ showProvaSocial }}" hint-placeholder-val="{{ true }}">
 <section id="prova" data-screen-label="Prova social" style="background:var(--bg-surface);padding:clamp(80px,10vw,128px) clamp(20px,5vw,64px);display:flex;flex-direction:column;gap:clamp(40px,5vw,64px)">
-  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
+  <div class="reveal" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px">
     <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,3.2rem);line-height:1.02">O QUE DIZEM<br>SOBRE A RECED</h2>
     <div style="font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--text-2);text-align:right;line-height:2">Relacionamentos<br>que geram frutos</div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:20px">
+  <div class="reveal-stagger" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:20px">
     <figure style="margin:0;display:flex;flex-direction:column;gap:20px;background:var(--bg-elev);border:1px solid var(--border);border-radius:3px;padding:28px">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:.6;color:var(--accent)">“</div>
       <p style="margin:0;font-size:14px;line-height:1.7;color:var(--text)">A RECED conseguiu traduzir em imagens exatamente o que vivemos. Excelência, sensibilidade e propósito em cada detalhe.</p>
@@ -234,7 +341,7 @@ a:hover{color:var(--text)}
       </figcaption>
     </figure>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:24px;border-top:1px solid var(--border);padding-top:clamp(32px,4vw,48px)">
+  <div class="reveal-stagger" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:24px;border-top:1px solid var(--border);padding-top:clamp(32px,4vw,48px)">
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.2rem,4.4vw,3.4rem);line-height:1;color:var(--accent)">+50</div>
       <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-2)">Projetos realizados</div>
@@ -252,10 +359,10 @@ a:hover{color:var(--text)}
 </sc-if>
 
 <section id="contato" data-screen-label="Contato" style="position:relative;overflow:hidden;min-height:min(70vh,620px);display:flex;align-items:center">
-  <div style="position:absolute;inset:0"><image-slot id="reced-contato" shape="rect" placeholder="Retrato em estúdio / fones de ouvido"></image-slot></div>
+  <div style="position:absolute;inset:0"><image-slot id="reced-contato" shape="rect" src="./uploads/RECED/Contato.png" placeholder="Retrato em estúdio / fones de ouvido"></image-slot></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(13,12,11,.96) 20%,rgba(13,12,11,.55) 62%,rgba(13,12,11,.2) 100%)"></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,var(--bg) 0%,rgba(13,12,11,0) 22%,rgba(13,12,11,0) 80%,var(--bg) 100%)"></div>
-  <div style="position:relative;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:40px;width:100%;padding:clamp(64px,8vw,104px) clamp(20px,5vw,64px)">
+  <div class="reveal" style="position:relative;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:40px;width:100%;padding:clamp(64px,8vw,104px) clamp(20px,5vw,64px)">
     <div style="display:flex;flex-direction:column;gap:26px;max-width:520px">
       <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.02">VAMOS PRODUZIR<br>JUNTOS?</h2>
       <p style="margin:0;font-size:15px;line-height:1.75;color:var(--text-2)">Entre em contato e fale com a gente pelo WhatsApp. Vamos conversar sobre o seu projeto e como a RECED pode ajudar.</p>
@@ -289,7 +396,7 @@ a:hover{color:var(--text)}
     <a href="#contato" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Contato</a>
   </nav>
   <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
-    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:2.2rem;color:var(--accent);line-height:1">Hesed</div>
+    <div class="reced-hesed-mark" tabindex="0" data-hesed-meaning="Do hebraico ḥesed: o amor leal, constante e misericordioso de Deus." style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:2.2rem;color:var(--accent);line-height:1">Hesed</div>
     <div style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);line-height:2">Amor leal.<br>Sempre.</div>
     <div style="margin-top:18px;font-size:10.5px;line-height:1.8;color:var(--text-2)">© 2025 RECED Produções.<br>Todos os direitos reservados.</div>
   </div>
@@ -353,6 +460,88 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function isNear(el){
+    var r = el.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    return r.top < vh * 0.88 && r.bottom > 0;
+  }
+
+  // Re-query live each time rather than caching a node list: the page's component
+  // runtime (x-dc) can re-render this markup after this script's first pass runs,
+  // which would otherwise leave earlier code watching detached, orphaned nodes.
+  function check(){
+    var all = document.querySelectorAll('.reveal, .reveal-stagger');
+    var remaining = 0;
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.classList.contains('is-visible')) continue;
+      if (isNear(el)) { el.classList.add('is-visible'); }
+      else { remaining++; }
+    }
+    return remaining;
+  }
+
+  var ticking = false;
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    setTimeout(function(){ check(); ticking = false; }, 100);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+
+  // Belt-and-braces polling: covers late/async re-renders of the reactive markup
+  // and runtimes where scroll/resize listeners alone prove unreliable.
+  var attempts = 0;
+  var poll = setInterval(function(){
+    var remaining = check();
+    attempts++;
+    if (remaining === 0 || attempts > 100) clearInterval(poll);
+  }, 200);
+})();
+</script>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var isCoarse = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  // Delegate on document rather than binding to #hero/.reced-spotlight directly:
+  // this page's component runtime (x-dc) can re-render that markup after this
+  // script's first pass, which would leave element references stale/detached.
+  var idled = false;
+  function markIdle(){
+    if (idled) return;
+    var spot = document.querySelector('#hero .reced-spotlight');
+    if (spot) { spot.classList.add('reced-spotlight--idle'); idled = true; }
+  }
+  if (isCoarse) {
+    markIdle();
+    document.addEventListener('pointermove', markIdle, { once: true });
+    return;
+  }
+
+  function place(hero, spot, clientX, clientY){
+    var r = hero.getBoundingClientRect();
+    var half = (spot.offsetWidth || 820) / 2;
+    spot.style.transform = 'translate3d(' + (clientX - r.left - half) + 'px,' + (clientY - r.top - half) + 'px,0)';
+  }
+
+  document.addEventListener('pointermove', function(e){
+    var hero = document.getElementById('hero');
+    if (!hero) return;
+    var over = hero.contains(e.target);
+    var spot = hero.querySelector('.reced-spotlight');
+    if (!spot) return;
+    spot.classList.toggle('is-active', over);
+    if (over) place(hero, spot, e.clientX, e.clientY);
+  }, { passive: true });
+})();
 </script>
 </body>
 </html>

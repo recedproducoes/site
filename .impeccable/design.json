@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T00:00:00Z",
+  "title": "Design System: RECED Produções",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Burnt Copper", "canonical": "#D6773A", "tonalRamp": ["#2A140A", "#3F1E0F", "#5A2C15", "#7C3E1C", "#A5562A", "#D6773A", "#E39D6B", "#F0C6A4"] },
+      "bg": { "role": "neutral", "displayName": "Espresso Black", "canonical": "#0F0A08", "tonalRamp": ["#050303", "#0F0A08", "#171110", "#201816", "#332722", "#4D3B33", "#6E594E", "#978276"] },
+      "bg-surface": { "role": "neutral", "displayName": "Warm Charcoal", "canonical": "#171110", "tonalRamp": ["#0F0A08", "#171110", "#201816", "#2C221D", "#3E322B", "#57483F", "#79665A", "#A0897A"] },
+      "bg-elev": { "role": "neutral", "displayName": "Ember Elevated", "canonical": "#201816", "tonalRamp": ["#171110", "#201816", "#2C221D", "#392E27", "#4C3E36", "#665448", "#87715F", "#AC9382"] },
+      "text": { "role": "neutral", "displayName": "Warm Bone", "canonical": "#F4EFEB", "tonalRamp": ["#302A26", "#4F4741", "#6F6660", "#918780", "#B4AAA2", "#D3C9C0", "#E9E1DA", "#F4EFEB"] },
+      "text-2": { "role": "neutral", "displayName": "Muted Clay", "canonical": "#A99B92", "tonalRamp": ["#22201D", "#39332F", "#544B44", "#71665D", "#8F8177", "#A99B92", "#C3B7AE", "#DDD4CC"] },
+      "border": { "role": "neutral", "displayName": "Ghost Border", "canonical": "rgba(244,239,235,.10)", "tonalRamp": ["rgba(244,239,235,.04)", "rgba(244,239,235,.06)", "rgba(244,239,235,.08)", "rgba(244,239,235,.10)", "rgba(244,239,235,.14)", "rgba(244,239,235,.20)", "rgba(244,239,235,.30)", "rgba(244,239,235,.45)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero H1 only." },
+      "headline": { "displayName": "Headline", "purpose": "Section H2s across Serviços, Portfólio, Prova social, Contato." },
+      "title": { "displayName": "Title", "purpose": "Card and tile headings." },
+      "body": { "displayName": "Body", "purpose": "Paragraph copy and testimonial quotes." },
+      "label": { "displayName": "Label", "purpose": "Nav, eyebrows, buttons, captions — uppercase, wide-tracked." },
+      "signature": { "displayName": "Signature", "purpose": "The 'Hesed' wordmark exclusively; italic Cormorant Garamond." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-standard", "value": "0.18s", "purpose": "Default hover/transition duration for chips, buttons, links (no explicit easing curve specified in source; linear/default timing)." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled CTA button used for conversions (WhatsApp contact, orçamento request).",
+      "html": "<a class=\"ds-btn-primary\" href=\"#contato\">Fale com a gente →</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 14px; background: #D6773A; color: #0F0A08; font-weight: 600; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; padding: 18px 28px; border-radius: 2px; text-decoration: none; transition: background .18s, color .18s; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: #F4EFEB; color: #0F0A08; } .ds-btn-primary:focus-visible { outline: 2px solid #D6773A; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Outlined secondary action, e.g. 'Ver todos os projetos'.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#portfolio\">Ver todos os projetos →</a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 12px; color: #F4EFEB; border: 1px solid rgba(244,239,235,.10); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; padding: 15px 26px; border-radius: 2px; text-decoration: none; transition: border-color .18s, color .18s; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { border-color: #D6773A; color: #D6773A; } .ds-btn-ghost:focus-visible { outline: 2px solid #D6773A; outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "filter-chip-inactive",
+      "description": "Portfolio category filter, active/inactive states.",
+      "html": "<button class=\"ds-chip\" type=\"button\">Música</button><button class=\"ds-chip ds-chip--active\" type=\"button\">Todos</button>",
+      "css": ".ds-chip { font-family: 'Inter', sans-serif; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; padding: 11px 20px; border-radius: 2px; cursor: pointer; transition: .18s; background: transparent; color: #A99B92; border: 1px solid rgba(244,239,235,.10); margin-right: 8px; } .ds-chip:hover { border-color: #D6773A; } .ds-chip--active { background: #D6773A; color: #0F0A08; border-color: #D6773A; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Service card / portfolio tile / testimonial panel container.",
+      "html": "<article class=\"ds-card\"><h3 class=\"ds-card-title\">Música /<br>Clipes autorais</h3><p class=\"ds-card-body\">Da composição à produção completa.</p></article>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 12px; background: #201816; border: 1px solid rgba(244,239,235,.10); border-radius: 3px; padding: 24px; transition: border-color .18s; } .ds-card:hover { border-color: #D6773A; } .ds-card-title { margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; line-height: 1.4; color: #F4EFEB; } .ds-card-body { margin: 0; font-size: 13.5px; line-height: 1.65; color: #A99B92; }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Sticky top navigation bar with active/inactive link states.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-nav-link--active\" href=\"#hero\">Início</a><a class=\"ds-nav-link\" href=\"#sobre\">Sobre</a><a class=\"ds-nav-cta\" href=\"#contato\">Fale com a gente</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 24px; padding: 16px 32px; background: rgba(15,10,8,.82); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(244,239,235,.10); } .ds-nav-link { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #A99B92; text-decoration: none; transition: color .18s; } .ds-nav-link--active { color: #D6773A; } .ds-nav-link:hover, .ds-nav-link:focus-visible { color: #F4EFEB; } .ds-nav-cta { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #D6773A; border: 1px solid #D6773A; padding: 10px 18px; border-radius: 2px; text-decoration: none; transition: .18s; } .ds-nav-cta:hover, .ds-nav-cta:focus-visible { background: #D6773A; color: #0F0A08; }"
+    },
+    {
+      "name": "Image Slot",
+      "kind": "custom",
+      "refersTo": "image-slot",
+      "description": "Placeholder/media component for content pending real photo or video sourcing; always paired with a descriptive placeholder label.",
+      "html": "<div class=\"ds-image-slot\"><span class=\"ds-image-slot-label\">Foto de palco / show ao vivo (fundo do hero)</span></div>",
+      "css": ".ds-image-slot { position: relative; width: 100%; height: 100%; min-height: 160px; background: #201816; border: 1px dashed rgba(244,239,235,.10); display: flex; align-items: center; justify-content: center; } .ds-image-slot-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #A99B92; text-align: center; padding: 12px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Dark Stage",
+    "overview": "The site is a darkened stage lit by one instrument: a single warm accent picking out the details that matter, everything else held in near-black. Nothing competes with the product — real footage, real stages, real studio moments — for attention; the interface's job is to recede so the work reads as the protagonist. This is a deliberate rejection of two clichés the client named explicitly: the generic \"site de igreja\" (white background, sunset photography, script font) and the \"clichê nicho gospel/worship\" look (violet-electric gradients, rainbow waveform color). Instead the palette borrows its discipline from studio and stage lighting — warm, technical, and restrained rather than devotional-soft or neon-spiritual.\n\nThe system currently ships four selectable theme variants (Âmbar/Estúdio, Vermelho cirúrgico, Cobre queimado, Monocromático) through a runtime theme switcher. Cobre queimado (burnt copper) is the normative default — it is the configured default of the interactive theme prop, distinct from the Âmbar values hardcoded in the base body CSS, which only apply before the runtime theme is applied.\n\nLayout stays a strict single column of full-bleed sections in fixed order, scored by generous cinematic vertical rhythm rather than a dense corporate grid.",
+    "keyCharacteristics": [
+      "Near-black stage backdrop with one warm accent doing all the visual signaling",
+      "Condensed, geometric, uppercase, wide-tracked display type — never serif for structural headings",
+      "No box-shadows; depth comes from luminance steps between three background layers",
+      "Generous cinematic vertical rhythm (80–128px between sections, not 48px)",
+      "Real photography/video fills every visual slot; the chrome around it stays quiet"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "The accent is the only hue in the system. Every other color is a luminance step of near-black-to-bone. If a new element needs emphasis, raise its luminance or apply the accent — never introduce a new hue to differentiate it.", "section": "colors" },
+      { "name": "The No-Line-On-Dark Rule", "body": "Borders never use a flat gray; they use rgba(text, .10) so the same border value reads correctly across all four palette variants without per-theme border tuning.", "section": "colors" },
+      { "name": "The Wide Label Rule", "body": "Any UI microcopy that isn't a heading or a paragraph — nav, eyebrows, buttons, captions — is uppercase Inter with letter-spacing between 0.16em and 0.32em.", "section": "typography" },
+      { "name": "The Three-Layer Rule", "body": "Depth has exactly three luminance steps (bg → surface → elev). Do not introduce a fourth; if something needs to feel 'above' a card, use the accent or a border, not a fourth luminance step.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the accent to a single hue system-wide; introduce new emphasis by raising luminance or accent opacity, never a second color (The One Signal Rule).",
+      "Do use uppercase, wide-tracked (0.16–0.32em) Inter for all non-heading, non-paragraph microcopy (The Wide Label Rule).",
+      "Do keep border-radius at 2–3px for rectangular elements; reserve 50% strictly for genuinely circular elements (avatars, icon badges, rings).",
+      "Do use the <image-slot> component with a descriptive placeholder for any media that isn't yet sourced, rather than a gray box or stock photo.",
+      "Do reserve Cormorant Garamond italic exclusively for the 'Hesed' signature moment; it must not spread into general body or heading use."
+    ],
+    "donts": [
+      "Don't add box-shadow anywhere — depth is luminance-only (The Three-Layer Rule).",
+      "Don't use a solid gray border; borders are always the translucent rgba(text, .10) wash so they survive palette switching.",
+      "Don't fabricate testimonials, client counts, or portfolio content — the Prova social numbers and quotes currently in the markup are placeholder/example content pending real client material.",
+      "Don't default new work to the Âmbar CSS values without checking the runtime theme — Cobre queimado is the configured default; Âmbar is only the pre-JS fallback.",
+      "Don't slide toward the 'clichê site de igreja' or the 'clichê gospel/worship' look — both are explicitly rejected anti-references for this system."
+    ]
+  }
+}
