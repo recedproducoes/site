@@ -765,15 +765,6 @@ class Component extends DCLogic {
   window.addEventListener('resize', onFadeScroll);
   updateFade();
 
-  // The 70-frame orbit scrub is the heaviest effect on the page (per-scroll
-  // image swaps plus a standing interval). On phones it was costing enough
-  // paint time to visibly stutter/stick while scrolling through the hero —
-  // the other pages, which don't run this, never had that problem. Desktop
-  // keeps the full effect; phones/touch just get the static first frame
-  // with its fade-in.
-  var isMobile = window.matchMedia && window.matchMedia('(max-width: 860px), (hover: none), (pointer: coarse)').matches;
-  if (isMobile) return;
-
   var FRAME_COUNT = 70;
   var frames = [];
   for (var i = 1; i <= FRAME_COUNT; i++) {
