@@ -1,0 +1,23 @@
+name: Keep Supabase alive
+
+# Supabase pauses free-tier projects after 7 days with no activity.
+# This makes a tiny, harmless read against the database every 3 days so it
+# never goes idle. Uses the same publishable/anon key already exposed in
+# supabase-config.js — it only has the read access RLS already grants to
+# anyone visiting the site.
+
+on:
+  schedule:
+    - cron: "0 6 */3 * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          curl -sf "https://keqqnjofygsrttpjkfjd.supabase.co/rest/v1/portfolio_items?select=id&limit=1" \
+            -H "apikey: sb_publishable_KZkn1I04uHCCyeyUZ2qHgw_yE-voJpN" \
+            -H "Authorization: Bearer sb_publishable_KZkn1I04uHCCyeyUZ2qHgw_yE-voJpN" \
+            -o /dev/null -w "Supabase responded: %{http_code}\n"
