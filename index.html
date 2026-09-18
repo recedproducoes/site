@@ -18,6 +18,42 @@
 <meta name="twitter:description" content="Produção musical e audiovisual para a igreja: clipes autorais, cobertura de eventos ao vivo e conteúdo institucional.">
 <meta name="twitter:image" content="https://reced.vercel.app/assets/og-image.jpg">
 <style>html,body{background:#0F0A08;margin:0}</style>
+<script>
+// Guard registered before any other script on the page, in the capture
+// phase, so a click on a video tile/hero button can never fall through to
+// the native YouTube link no matter how slow the rest of the page is to
+// load. Hands off to the real lightbox once it's ready; queues the click
+// if somehow fired first.
+(function(){
+  function extractVid(el){
+    var vid = el.getAttribute('data-video-id');
+    if (vid) return vid;
+    var href = el.getAttribute('href') || '';
+    var m = href.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a');
+    if (!a) return;
+    var isTile = a.classList && a.classList.contains('reced-tile');
+    var isHero = a.id === 'reced-hero-watch';
+    if (!isTile && !isHero) return;
+    var vid = isTile ? extractVid(a) : null;
+    if (isHero && !vid) {
+      var firstTile = document.querySelector('.reced-tile');
+      vid = firstTile ? extractVid(firstTile) : null;
+    }
+    if (!vid) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (window.__recedOpenLightbox) {
+      window.__recedOpenLightbox(vid, a);
+    } else {
+      window.__recedPendingVideo = { id: vid, el: a };
+    }
+  }, true);
+})();
+</script>
 <script src="./support.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="./supabase-config.js"></script>
@@ -889,34 +925,13 @@ class Component extends DCLogic {
     currentFlipAnim.finished.then(finish, function(){});
   }
 
-  function extractVideoId(tile){
-    var vid = tile.getAttribute('data-video-id');
-    if (vid) return vid;
-    var href = tile.getAttribute('href') || '';
-    var m = href.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
-    return m ? m[1] : null;
+  window.__recedOpenLightbox = openLightbox;
+  if (window.__recedPendingVideo) {
+    openLightbox(window.__recedPendingVideo.id, window.__recedPendingVideo.el);
+    window.__recedPendingVideo = null;
   }
 
   document.addEventListener('click', function(e){
-    var tile = e.target.closest && e.target.closest('.reced-tile');
-    if (tile) {
-      var vid = extractVideoId(tile);
-      if (vid) {
-        e.preventDefault();
-        openLightbox(vid, tile);
-        return;
-      }
-    }
-    var heroWatch = e.target.closest && e.target.closest('#reced-hero-watch');
-    if (heroWatch) {
-      var firstTile = document.querySelector('.reced-tile');
-      var heroVid = firstTile ? extractVideoId(firstTile) : null;
-      if (heroVid) {
-        e.preventDefault();
-        openLightbox(heroVid, heroWatch);
-        return;
-      }
-    }
     if (e.target.id === 'lightbox-close' || e.target.id === 'lightbox') closeLightbox();
   });
   document.addEventListener('keydown', function(e){
