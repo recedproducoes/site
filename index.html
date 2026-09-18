@@ -3,6 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="./uploads/RECED/Reced_Logo/Reced%20mic.png">
+<title>RECED Produções | Produção musical e audiovisual</title>
+<meta name="description" content="Produção musical e audiovisual para a igreja: clipes autorais, cobertura de eventos ao vivo e conteúdo institucional, com excelência técnica a serviço de uma mensagem maior.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://reced.vercel.app/">
+<meta property="og:title" content="RECED Produções | Produção musical e audiovisual">
+<meta property="og:description" content="Produção musical e audiovisual para a igreja: clipes autorais, cobertura de eventos ao vivo e conteúdo institucional.">
+<meta property="og:image" content="https://reced.vercel.app/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RECED Produções | Produção musical e audiovisual">
+<meta name="twitter:description" content="Produção musical e audiovisual para a igreja: clipes autorais, cobertura de eventos ao vivo e conteúdo institucional.">
+<meta name="twitter:image" content="https://reced.vercel.app/assets/og-image.jpg">
 <style>html,body{background:#0F0A08;margin:0}</style>
 <script src="./support.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -122,6 +136,23 @@ image-slot::part(ring){display:none!important}
 .reced-header-logo{transition:height .3s var(--ease-out)}
 #reced-header.is-scrolled{padding:10px clamp(20px,5vw,64px)!important;background:color-mix(in srgb,var(--bg) 50%,transparent)!important}
 #reced-header.is-scrolled .reced-header-logo{height:32px!important}
+.nav-toggle{display:none}
+.nav-backdrop{display:none}
+@media (max-width:860px){
+  .nav-toggle{display:flex;flex:none;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--border);border-radius:2px;background:transparent;cursor:pointer;padding:0}
+  .nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{content:'';display:block;width:18px;height:1.5px;background:var(--text)}
+  .nav-toggle span{position:relative}
+  .nav-toggle span::before{position:absolute;top:-6px;left:0}
+  .nav-toggle span::after{position:absolute;top:6px;left:0}
+  #reced-header nav{position:fixed!important;top:0;right:-100%;width:min(78vw,320px);height:100vh;flex-direction:column!important;align-items:flex-start!important;gap:0!important;background:var(--bg-surface);border-left:1px solid var(--border);padding:96px 28px 28px;transition:right .35s var(--ease-out);z-index:60;overflow-y:auto}
+  #reced-header nav.open{right:0}
+  #reced-header nav a{width:100%;padding:15px 0;border-bottom:1px solid var(--border)}
+  #reced-header nav a:last-child{margin-top:16px;text-align:center;border-radius:2px}
+  .nav-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:55}
+  .nav-backdrop.open{opacity:1;pointer-events:auto}
+  .reced-hero-in-row{flex-wrap:wrap!important}
+  .reced-hero-side{align-items:flex-start!important;text-align:left!important}
+}
 
 /* These image slots are leftover editor scaffolding: clicking/dragging onto them
    opened a file-upload dialog in the design tool. Disabled for the public site —
@@ -194,7 +225,7 @@ image-slot::part(image){
 
 <header id="reced-header" style="position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px clamp(20px,5vw,64px);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)">
   <a href="#hero" style="display:flex;align-items:center"><img class="reced-header-logo" src="./assets/reced-logo-lado-trim.png" alt="RECED Produções" style="height:42px;width:auto;display:block"></a>
-  <nav style="display:flex;align-items:center;gap:clamp(14px,2.4vw,34px)">
+  <nav id="site-nav" style="display:flex;align-items:center;gap:clamp(14px,2.4vw,34px)">
     <a href="#hero" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)" style-hover="color:var(--text)">Início</a>
     <a href="#sobre" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Sobre</a>
     <a href="#servicos" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Serviços</a>
@@ -202,7 +233,9 @@ image-slot::part(image){
     <a href="#contato" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Contato</a>
     <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:10px 18px;border-radius:2px;white-space:nowrap" style-hover="background:var(--accent);color:var(--bg)">Fale com a gente</a>
   </nav>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
 </header>
+<div class="nav-backdrop" id="nav-backdrop"></div>
 
 <div class="reced-hero-pin" style="position:relative;height:180vh">
 <section id="hero" data-screen-label="Hero" style="position:sticky;top:0;min-height:min(88vh,760px);height:100vh;max-height:900px;display:flex;align-items:flex-end;overflow:hidden">
@@ -215,19 +248,19 @@ image-slot::part(image){
   <div class="reced-spotlight" aria-hidden="true"></div>
   <div class="reced-dust" id="reced-dust" aria-hidden="true"></div>
 
-  <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;width:100%;padding:clamp(48px,8vw,104px) clamp(20px,5vw,64px) clamp(44px,6vw,72px)">
+  <div class="reced-hero-in-row" style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;width:100%;padding:clamp(48px,8vw,104px) clamp(20px,5vw,64px) clamp(44px,6vw,72px)">
     <div class="reced-hero-in" style="max-width:720px;display:flex;flex-direction:column;gap:26px">
       <h1 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.6rem,6.4vw,5.2rem);line-height:.95;letter-spacing:-.01em;text-wrap:balance">SONS QUE<br><span style="color:var(--accent)">TRANSFORMAM.</span></h1>
       <div style="font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2)">Música &nbsp;·&nbsp; Vídeo &nbsp;·&nbsp; Experiências</div>
       <p style="margin:0;max-width:420px;font-size:15px;line-height:1.7;color:var(--text-2)">Produção audiovisual com propósito. Excelência técnica a serviço da mensagem.</p>
-      <a href="#portfolio" style="display:flex;align-items:center;gap:16px;color:var(--text)" style-hover="color:var(--accent)">
+      <a href="#portfolio" id="reced-hero-watch" style="display:flex;align-items:center;gap:16px;color:var(--text)" style-hover="color:var(--accent)">
         <span data-play-badge style="display:grid;place-items:center;width:54px;height:54px;border:1px solid var(--accent);border-radius:50%;color:var(--accent)">
           <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0l14 8-14 8z"></path></svg>
         </span>
         <span style="font-size:11px;letter-spacing:.22em;text-transform:uppercase">Assistir ao vídeo</span>
       </a>
     </div>
-    <div class="reced-hero-side" style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right;flex:none">
+    <div class="reced-hero-side" style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right;flex:none;min-width:140px">
       <div style="font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--accent)">Hesed</div>
       <div style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);line-height:1.9">Amor leal.<br>Sempre.</div>
       <div class="reced-line-y" style="width:1px;height:70px;background:linear-gradient(to bottom,var(--accent),transparent);margin-top:12px"></div>
@@ -856,17 +889,72 @@ class Component extends DCLogic {
     currentFlipAnim.finished.then(finish, function(){});
   }
 
+  function extractVideoId(tile){
+    var vid = tile.getAttribute('data-video-id');
+    if (vid) return vid;
+    var href = tile.getAttribute('href') || '';
+    var m = href.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+
   document.addEventListener('click', function(e){
-    var tile = e.target.closest && e.target.closest('.reced-tile[data-video-id]');
-    if (tile && tile.getAttribute('data-video-id')) {
-      e.preventDefault();
-      openLightbox(tile.getAttribute('data-video-id'), tile);
-      return;
+    var tile = e.target.closest && e.target.closest('.reced-tile');
+    if (tile) {
+      var vid = extractVideoId(tile);
+      if (vid) {
+        e.preventDefault();
+        openLightbox(vid, tile);
+        return;
+      }
+    }
+    var heroWatch = e.target.closest && e.target.closest('#reced-hero-watch');
+    if (heroWatch) {
+      var firstTile = document.querySelector('.reced-tile');
+      var heroVid = firstTile ? extractVideoId(firstTile) : null;
+      if (heroVid) {
+        e.preventDefault();
+        openLightbox(heroVid, heroWatch);
+        return;
+      }
     }
     if (e.target.id === 'lightbox-close' || e.target.id === 'lightbox') closeLightbox();
   });
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') closeLightbox();
+  });
+})();
+</script>
+<script>
+(function(){
+  function closeMenu(){
+    var nav = document.getElementById('site-nav');
+    var toggle = document.getElementById('nav-toggle');
+    var backdrop = document.getElementById('nav-backdrop');
+    if (nav) nav.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  function openMenu(){
+    var nav = document.getElementById('site-nav');
+    var toggle = document.getElementById('nav-toggle');
+    var backdrop = document.getElementById('nav-backdrop');
+    if (nav) nav.classList.add('open');
+    if (backdrop) backdrop.classList.add('open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  document.addEventListener('click', function(e){
+    if (e.target.closest('#nav-toggle')) {
+      var nav = document.getElementById('site-nav');
+      if (nav && nav.classList.contains('open')) closeMenu(); else openMenu();
+      return;
+    }
+    if (e.target.closest('#nav-backdrop')) { closeMenu(); return; }
+    if (e.target.closest('#site-nav a')) { closeMenu(); return; }
+  });
+  window.addEventListener('resize', function(){
+    if (window.innerWidth > 860) closeMenu();
   });
 })();
 </script>
