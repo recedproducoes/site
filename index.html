@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{background:#0F0A08;margin:0}</style>
 <script src="./support.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="./supabase-config.js"></script>
@@ -129,6 +130,35 @@ image-slot::part(empty){cursor:default}
 
 /* Hero scroll-scrub: two stacked frames crossfade instead of hard-cutting. */
 .reced-hero-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:opacity}
+/* First paint only: the hero photo starts dark and fades up, like lights
+   coming up on stage, instead of popping in the instant the image decodes. */
+@keyframes recedHeroFadeIn{from{opacity:0}to{opacity:1}}
+#reced-hero-scrub{animation:recedHeroFadeIn 3.2s var(--ease-out) both}
+
+/* Slow Ken Burns loop on the Contato background photo: a gentle breathing
+   zoom, not a distinct in/out cut — applied to the wrapper (not the image
+   itself) so it doesn't fight the forced object-fit override above. */
+@keyframes recedKenBurns{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.reced-kenburns{animation:recedKenBurns 18s ease-in-out infinite}
+
+/* Dust motes drifting up through the hero, like light catching particles
+   on a stage. Pure CSS, one shared keyframe, per-particle variation via
+   custom properties set inline by JS. */
+.reced-dust{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.reced-dust span{
+  position:absolute;bottom:-4%;left:var(--x,50%);
+  width:var(--size,3px);height:var(--size,3px);border-radius:50%;
+  background:radial-gradient(circle,var(--accent),transparent 72%);
+  opacity:0;
+  animation:recedDustRise var(--dur,12s) linear infinite;
+  animation-delay:var(--delay,0s);
+}
+@keyframes recedDustRise{
+  0%{transform:translate(0,0);opacity:0}
+  12%{opacity:var(--peak,.55)}
+  85%{opacity:var(--peak,.55)}
+  100%{transform:translate(var(--dx,24px),-72vh);opacity:0}
+}
 
 /* image-slot's own cover-crop math assumes editing is available and can
    under-scale non-16:9 sources (e.g. YouTube's 4:3 thumbnails), leaving
@@ -149,7 +179,7 @@ image-slot::part(image){
 .lightbox-close:hover{border-color:var(--accent);color:var(--accent)}
 
 @media (prefers-reduced-motion:reduce){
-  .reced-hero-in>*,.reced-hero-side>*,.reced-line-y,.reveal,.reveal-stagger>*,.reced-tile{animation:none!important;opacity:1!important;transform:none!important}
+  .reced-hero-in>*,.reced-hero-side>*,.reced-line-y,.reveal,.reveal-stagger>*,.reced-tile,#reced-hero-scrub,.reced-kenburns{animation:none!important;opacity:1!important;transform:none!important}
   a:hover [data-play-badge]{transform:none}
   .reced-scroll-cue{animation:none!important;opacity:.5!important}
   image-slot::part(ring),image-slot::part(empty){animation:none!important}
@@ -183,6 +213,7 @@ image-slot::part(image){
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,rgba(13,12,11,.95) 12%,rgba(13,12,11,.72) 48%,rgba(13,12,11,.35) 100%)"></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--bg) 2%,rgba(13,12,11,0) 38%)"></div>
   <div class="reced-spotlight" aria-hidden="true"></div>
+  <div class="reced-dust" id="reced-dust" aria-hidden="true"></div>
 
   <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;width:100%;padding:clamp(48px,8vw,104px) clamp(20px,5vw,64px) clamp(44px,6vw,72px)">
     <div class="reced-hero-in" style="max-width:720px;display:flex;flex-direction:column;gap:26px">
@@ -223,7 +254,7 @@ image-slot::part(image){
   </div>
 
   <div class="reveal" style="position:relative;border-radius:3px;overflow:hidden;display:flex;flex-direction:column;gap:clamp(40px,5vw,64px);padding:clamp(32px,4vw,48px) clamp(20px,5vw,64px) clamp(48px,6vw,72px)">
-    <div style="position:absolute;inset:0"><image-slot id="reced-proposito" shape="rect" src="./uploads/RECED/Proposito%20b.png" placeholder="Plateia em adoração, mãos levantadas"></image-slot></div>
+    <div class="reced-kenburns" style="position:absolute;inset:0"><image-slot id="reced-proposito" shape="rect" src="./uploads/RECED/Proposito%20b.png" placeholder="Plateia em adoração, mãos levantadas"></image-slot></div>
     <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,var(--bg) 0%,transparent 14%),linear-gradient(to bottom,rgba(15,10,8,.62) 0%,rgba(15,10,8,.72) 55%,rgba(15,10,8,.85) 100%)"></div>
 
     <div class="reveal-stagger" style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(24px,4vw,56px)">
@@ -364,7 +395,7 @@ image-slot::part(image){
 </sc-if>
 
 <section id="contato" data-screen-label="Contato" style="position:relative;overflow:hidden;min-height:min(70vh,620px);display:flex;align-items:center">
-  <div style="position:absolute;inset:0"><image-slot id="reced-contato" shape="rect" src="./uploads/RECED/Contato.png" placeholder="Retrato em estúdio / fones de ouvido"></image-slot></div>
+  <div class="reced-kenburns" style="position:absolute;inset:0"><image-slot id="reced-contato" shape="rect" src="./uploads/RECED/Contato.png" placeholder="Retrato em estúdio / fones de ouvido"></image-slot></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(13,12,11,.96) 20%,rgba(13,12,11,.55) 62%,rgba(13,12,11,.2) 100%)"></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,var(--bg) 0%,rgba(13,12,11,0) 22%,rgba(13,12,11,0) 80%,var(--bg) 100%)"></div>
   <div class="reveal" style="position:relative;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:40px;width:100%;padding:clamp(64px,8vw,104px) clamp(20px,5vw,64px)">
@@ -640,10 +671,17 @@ class Component extends DCLogic {
   var frames = [];
   for (var i = 1; i <= FRAME_COUNT; i++) {
     var n = i < 10 ? '0' + i : '' + i;
-    var img = new Image();
-    img.src = './assets/hero-orbit/frame-' + n + '.jpg';
-    frames.push(img.src);
+    frames.push('./assets/hero-orbit/frame-' + n + '.jpg');
   }
+  // Preload in small batches rather than firing all 70 requests at once —
+  // real browsers cap concurrent connections per origin anyway, but some
+  // simpler static servers choke on a burst this size.
+  (function preload(idx){
+    if (idx >= frames.length) return;
+    var batch = frames.slice(idx, idx + 6);
+    batch.forEach(function(src){ var img = new Image(); img.src = src; });
+    setTimeout(function(){ preload(idx + 6); }, 60);
+  })(0);
 
   var ticking = false;
   var lastBase = -1, lastNext = -1;
@@ -676,6 +714,21 @@ class Component extends DCLogic {
     if (next !== lastNext) { b.src = frames[next]; lastNext = next; }
     a.style.opacity = String(1 - frac);
     b.style.opacity = String(frac);
+
+    // Everything in the hero (photo and text alike) dims out together, but
+    // only once the section actually starts rising off screen — not while
+    // it's still pinned cycling through frames. While pinned, the sticky
+    // hero's own top stays at 0; it only goes negative once scrolling has
+    // used up the pin and the section resumes normal flow, rising away.
+    var hero = document.getElementById('hero');
+    if (hero) {
+      var heroRect = hero.getBoundingClientRect();
+      var risenAmount = Math.max(0, -heroRect.top);
+      var riseProgress = heroRect.height > 0 ? Math.min(1, risenAmount / heroRect.height) : 0;
+      var FADE_START = 0.2;
+      var heroOpacity = riseProgress <= FADE_START ? 1 : Math.max(0, 1 - (riseProgress - FADE_START) / (1 - FADE_START));
+      hero.style.opacity = String(heroOpacity);
+    }
   }
 
   function onScroll(){
@@ -692,6 +745,47 @@ class Component extends DCLogic {
   // a plain interval keeps the scrub responsive everywhere; each call is a
   // handful of property reads/writes, cheap even at this cadence.
   setInterval(update, 150);
+})();
+</script>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var COUNT = 22;
+
+  function populate(){
+    var host = document.getElementById('reced-dust');
+    if (!host || host.childElementCount) return false;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < COUNT; i++) {
+      var p = document.createElement('span');
+      var size = (2 + Math.random() * 2.5).toFixed(1);
+      var dur = (9 + Math.random() * 10).toFixed(1);
+      var delay = (-Math.random() * parseFloat(dur)).toFixed(1);
+      var dx = Math.round((Math.random() - 0.5) * 90);
+      var peak = (0.35 + Math.random() * 0.35).toFixed(2);
+      p.style.setProperty('--x', (Math.random() * 100).toFixed(1) + '%');
+      p.style.setProperty('--size', size + 'px');
+      p.style.setProperty('--dur', dur + 's');
+      p.style.setProperty('--delay', delay + 's');
+      p.style.setProperty('--dx', dx + 'px');
+      p.style.setProperty('--peak', peak);
+      frag.appendChild(p);
+    }
+    host.appendChild(frag);
+    return true;
+  }
+
+  // Same belt-and-braces pattern used elsewhere on this page: this page's
+  // component runtime can re-render static markup after first paint, which
+  // would silently wipe out particles added too early.
+  if (!populate()) return;
+  var attempts = 0;
+  var poll = setInterval(function(){
+    populate();
+    attempts++;
+    if (attempts > 20) clearInterval(poll);
+  }, 300);
 })();
 </script>
 
