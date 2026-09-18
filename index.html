@@ -122,6 +122,12 @@ a:hover [data-play-badge]{transform:scale(1.12)}
 
 image-slot{color:var(--accent)}
 image-slot::part(ring){display:none!important}
+/* image-slot is leftover scaffolding from the design tool this site was built
+   in — an image editor that captures touch gestures on itself (drag/pan to
+   reposition). On phones that swallows the vertical swipe, so a finger that
+   lands on a photo can't scroll the page at all. This page only shows the
+   images, never edits them, so hand touch gestures back to the browser. */
+image-slot,image-slot::part(image){touch-action:pan-y!important}
 
 /* Delight: the isolated "Hesed" signature reveals the word's meaning on discovery —
    the story already told in Sobre, resurfaced where curiosity strikes. */
