@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="./supabase-config.js"></script>
 </head>
 <body>
 <x-dc>
@@ -122,6 +124,17 @@ image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
   50%{transform:translate3d(calc(55vw - 50%),calc(45vh - 50%),0)}
 }
 
+/* Sticky header: a light retreat on scroll — slightly smaller, more transparent */
+#reced-header{transition:padding .3s var(--ease-out),background-color .3s ease}
+.reced-header-logo{transition:height .3s var(--ease-out)}
+#reced-header.is-scrolled{padding:10px clamp(20px,5vw,64px)!important;background:color-mix(in srgb,var(--bg) 50%,transparent)!important}
+#reced-header.is-scrolled .reced-header-logo{height:32px!important}
+
+/* These image slots are leftover editor scaffolding: clicking/dragging onto them
+   opened a file-upload dialog in the design tool. Disabled for the public site —
+   see the click/dragover/drop interceptor script below. */
+image-slot::part(empty){cursor:default}
+
 @media (prefers-reduced-motion:reduce){
   .reced-hero-in>*,.reced-hero-side>*,.reced-line-y,.reveal,.reveal-stagger>*,.reced-tile{animation:none!important;opacity:1!important;transform:none!important}
   a:hover [data-play-badge]{transform:none}
@@ -132,10 +145,10 @@ image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
 </style>
 </helmet>
 
-<div style="background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden">
+<div style="background:var(--bg);color:var(--text);min-height:100vh;overflow-x:clip">
 
-<header style="position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px clamp(20px,5vw,64px);background:rgba(13,12,11,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)">
-  <a href="#hero" style="display:flex;align-items:center"><img src="./assets/reced-logo-lado-trim.png" alt="RECED Produções" style="height:42px;width:auto;display:block"></a>
+<header id="reced-header" style="position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px clamp(20px,5vw,64px);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)">
+  <a href="#hero" style="display:flex;align-items:center"><img class="reced-header-logo" src="./assets/reced-logo-lado-trim.png" alt="RECED Produções" style="height:42px;width:auto;display:block"></a>
   <nav style="display:flex;align-items:center;gap:clamp(14px,2.4vw,34px)">
     <a href="#hero" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)" style-hover="color:var(--text)">Início</a>
     <a href="#sobre" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Sobre</a>
@@ -276,8 +289,8 @@ image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:20px">
     <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
-      <a href="#portfolio" class="reced-tile" style="position:relative;display:block;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev)" style-hover="border-color:var(--accent)">
-        <div style="aspect-ratio:var(--tile-ar)"><image-slot id="{{ it.slot }}" shape="rect" placeholder="{{ it.placeholder }}"></image-slot></div>
+      <a href="{{ it.href }}" target="{{ it.target }}" rel="{{ it.rel }}" class="reced-tile" style="position:relative;display:block;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev)" style-hover="border-color:var(--accent)">
+        <div style="aspect-ratio:var(--tile-ar)"><image-slot shape="rect" src="{{ it.imageUrl }}" placeholder="{{ it.placeholder }}"></image-slot></div>
         <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:18px 18px 16px;pointer-events:none;background:linear-gradient(to top,rgba(13,12,11,.92),rgba(13,12,11,0))">
           <div style="display:flex;flex-direction:column;gap:5px">
             <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text)">{{ it.title }}</div>
@@ -307,39 +320,19 @@ image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
     <div style="font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--text-2);text-align:right;line-height:2">Relacionamentos<br>que geram frutos</div>
   </div>
   <div class="reveal-stagger" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:20px">
-    <figure style="margin:0;display:flex;flex-direction:column;gap:20px;background:var(--bg-elev);border:1px solid var(--border);border-radius:3px;padding:28px">
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:.6;color:var(--accent)">“</div>
-      <p style="margin:0;font-size:14px;line-height:1.7;color:var(--text)">A RECED conseguiu traduzir em imagens exatamente o que vivemos. Excelência, sensibilidade e propósito em cada detalhe.</p>
-      <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:18px">
-        <span style="flex:none;width:38px;height:38px;border-radius:50%;overflow:hidden;display:block"><image-slot id="reced-dep-1" shape="circle" placeholder="Foto"></image-slot></span>
-        <span style="display:flex;flex-direction:column;gap:3px">
-          <span style="font-size:12.5px;color:var(--text)">Pr. Thiago Alves</span>
-          <span style="font-size:10.5px;color:var(--text-2)">Igreja Vida Plena</span>
-        </span>
-      </figcaption>
-    </figure>
-    <figure style="margin:0;display:flex;flex-direction:column;gap:20px;background:var(--bg-elev);border:1px solid var(--border);border-radius:3px;padding:28px">
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:.6;color:var(--accent)">“</div>
-      <p style="margin:0;font-size:14px;line-height:1.7;color:var(--text)">Trabalhar com a RECED foi uma experiência incrível. Profissionalismo e um coração voltado para o Reino.</p>
-      <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:18px">
-        <span style="flex:none;width:38px;height:38px;border-radius:50%;overflow:hidden;display:block"><image-slot id="reced-dep-2" shape="circle" placeholder="Foto"></image-slot></span>
-        <span style="display:flex;flex-direction:column;gap:3px">
-          <span style="font-size:12.5px;color:var(--text)">Juliana Mendes</span>
-          <span style="font-size:10.5px;color:var(--text-2)">Cantora</span>
-        </span>
-      </figcaption>
-    </figure>
-    <figure style="margin:0;display:flex;flex-direction:column;gap:20px;background:var(--bg-elev);border:1px solid var(--border);border-radius:3px;padding:28px">
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:.6;color:var(--accent)">“</div>
-      <p style="margin:0;font-size:14px;line-height:1.7;color:var(--text)">O resultado superou todas as nossas expectativas. Qualidade técnica e uma equipe que entende de verdade o que faz.</p>
-      <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:18px">
-        <span style="flex:none;width:38px;height:38px;border-radius:50%;overflow:hidden;display:block"><image-slot id="reced-dep-3" shape="circle" placeholder="Foto"></image-slot></span>
-        <span style="display:flex;flex-direction:column;gap:3px">
-          <span style="font-size:12.5px;color:var(--text)">Lucas Ferreira</span>
-          <span style="font-size:10.5px;color:var(--text-2)">Ministério Juventude</span>
-        </span>
-      </figcaption>
-    </figure>
+    <sc-for list="{{ testimonials }}" as="t" hint-placeholder-count="3">
+      <figure style="margin:0;display:flex;flex-direction:column;gap:20px;background:var(--bg-elev);border:1px solid var(--border);border-radius:3px;padding:28px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:.6;color:var(--accent)">“</div>
+        <p style="margin:0;font-size:14px;line-height:1.7;color:var(--text)">{{ t.quote }}</p>
+        <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:18px">
+          <span style="flex:none;width:38px;height:38px;border-radius:50%;overflow:hidden;display:block"><image-slot shape="circle" src="{{ t.avatarUrl }}" placeholder="Foto"></image-slot></span>
+          <span style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:12.5px;color:var(--text)">{{ t.authorName }}</span>
+            <span style="font-size:10.5px;color:var(--text-2)">{{ t.authorRole }}</span>
+          </span>
+        </figcaption>
+      </figure>
+    </sc-for>
   </div>
   <div class="reveal-stagger" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:24px;border-top:1px solid var(--border);padding-top:clamp(32px,4vw,48px)">
     <div style="display:flex;flex-direction:column;gap:8px">
@@ -406,7 +399,26 @@ image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Âmbar / Estúdio&quot;,&quot;Vermelho cirúrgico&quot;,&quot;Cobre queimado&quot;,&quot;Monocromático&quot;],&quot;default&quot;:&quot;Cobre queimado&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Tema&quot;},&quot;tileAspect&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;16:9&quot;,&quot;4:5&quot;,&quot;1:1&quot;],&quot;default&quot;:&quot;16:9&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Portfólio&quot;},&quot;showProvaSocial&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Seções&quot;}}">
 class Component extends DCLogic {
-  state = { cat: 'Todos' };
+  // Seeded with the same rows the database starts with, so the very first paint —
+  // before the async Supabase fetch resolves — never falls back to sc-for's
+  // literal-placeholder rendering for an empty list (unresolved "{{ }}" markup
+  // briefly visible to real visitors). Supabase overwrites this once it loads.
+  state = {
+    cat: 'Todos',
+    portfolioItems: [
+      { title:'Quão Grande é Ele', kind:'Cover', cat:'Música', imageUrl:'', placeholder:'Quão Grande é Ele', href:'#portfolio', target:'_self', rel:'' },
+      { title:'Lugar Secreto', kind:'Autoral', cat:'Música', imageUrl:'', placeholder:'Lugar Secreto', href:'#portfolio', target:'_self', rel:'' },
+      { title:'Conferência Jovens', kind:'Evento', cat:'Eventos', imageUrl:'', placeholder:'Conferência Jovens', href:'#portfolio', target:'_self', rel:'' },
+      { title:'Institucional Igreja', kind:'Institucional', cat:'Institucional', imageUrl:'', placeholder:'Institucional Igreja', href:'#portfolio', target:'_self', rel:'' },
+      { title:'Teaser Conferência', kind:'Evento', cat:'Eventos', imageUrl:'', placeholder:'Teaser Conferência', href:'#portfolio', target:'_self', rel:'' },
+      { title:'Gravação em Estúdio', kind:'Bastidores', cat:'Música', imageUrl:'', placeholder:'Gravação em Estúdio', href:'#portfolio', target:'_self', rel:'' }
+    ],
+    testimonials: [
+      { quote:'A RECED conseguiu traduzir em imagens exatamente o que vivemos. Excelência, sensibilidade e propósito em cada detalhe.', authorName:'Pr. Thiago Alves', authorRole:'Igreja Vida Plena', avatarUrl:'' },
+      { quote:'Trabalhar com a RECED foi uma experiência incrível. Profissionalismo e um coração voltado para o Reino.', authorName:'Juliana Mendes', authorRole:'Cantora', avatarUrl:'' },
+      { quote:'O resultado superou todas as nossas expectativas. Qualidade técnica e uma equipe que entende de verdade o que faz.', authorName:'Lucas Ferreira', authorRole:'Ministério Juventude', avatarUrl:'' }
+    ]
+  };
 
   PALETTES = {
     'Âmbar / Estúdio': { bg:'#0D0C0B', surface:'#151311', elev:'#1D1A17', accent:'#C9A227', text:'#F3F0EA', text2:'#AAA39A' },
@@ -415,17 +427,45 @@ class Component extends DCLogic {
     'Monocromático': { bg:'#0A0A0A', surface:'#121212', elev:'#1A1A1A', accent:'#E8E8E8', text:'#FFFFFF', text2:'#8F8F8F' }
   };
 
-  ITEMS = [
-    { title:'Quão Grande é Ele', kind:'Cover', cat:'Música', slot:'reced-p1', placeholder:'Clipe — Quão Grande é Ele' },
-    { title:'Lugar Secreto', kind:'Autoral', cat:'Música', slot:'reced-p2', placeholder:'Clipe — Lugar Secreto' },
-    { title:'Conferência Jovens', kind:'Evento', cat:'Eventos', slot:'reced-p3', placeholder:'Cobertura — Conferência Jovens' },
-    { title:'Institucional Igreja', kind:'Institucional', cat:'Institucional', slot:'reced-p4', placeholder:'Institucional — Igreja' },
-    { title:'Teaser Conferência', kind:'Evento', cat:'Eventos', slot:'reced-p5', placeholder:'Teaser — Conferência' },
-    { title:'Gravação em Estúdio', kind:'Bastidores', cat:'Música', slot:'reced-p6', placeholder:'Bastidores — Estúdio' }
-  ];
+  CAT_LABELS = { musica: 'Música', eventos: 'Eventos', institucional: 'Institucional' };
 
-  componentDidMount() { this.applyTheme(); }
+  componentDidMount() {
+    this.applyTheme();
+    this.loadContent();
+  }
   componentDidUpdate() { this.applyTheme(); }
+
+  async loadContent() {
+    const cfg = window.RECED_SUPABASE;
+    if (!cfg || !window.supabase) return;
+    const client = window.supabase.createClient(cfg.url, cfg.publishableKey);
+    const bucket = client.storage.from(cfg.mediaBucket);
+
+    const [{ data: items }, { data: testimonials }] = await Promise.all([
+      client.from('portfolio_items').select('*').order('sort_order'),
+      client.from('testimonials').select('*').order('sort_order')
+    ]);
+
+    const portfolioItems = (items || []).map(it => ({
+      title: it.title,
+      kind: it.kind,
+      cat: this.CAT_LABELS[it.category] || it.category,
+      imageUrl: it.image_path ? bucket.getPublicUrl(it.image_path).data.publicUrl : '',
+      placeholder: it.title,
+      href: it.youtube_url || '#portfolio',
+      target: it.youtube_url ? '_blank' : '_self',
+      rel: it.youtube_url ? 'noopener' : ''
+    }));
+
+    const testimonialsOut = (testimonials || []).map(t => ({
+      quote: t.quote,
+      authorName: t.author_name,
+      authorRole: t.author_role,
+      avatarUrl: t.avatar_path ? bucket.getPublicUrl(t.avatar_path).data.publicUrl : ''
+    }));
+
+    this.setState({ portfolioItems, testimonials: testimonialsOut });
+  }
 
   applyTheme() {
     const p = this.PALETTES[this.props.palette] || this.PALETTES['Âmbar / Estúdio'];
@@ -453,9 +493,11 @@ class Component extends DCLogic {
         select: () => this.setState({ cat: label })
       };
     });
+    const allItems = this.state.portfolioItems;
     return {
       filters,
-      items: cat === 'Todos' ? this.ITEMS : this.ITEMS.filter(i => i.cat === cat),
+      items: cat === 'Todos' ? allItems : allItems.filter(i => i.cat === cat),
+      testimonials: this.state.testimonials,
       showProvaSocial: this.props.showProvaSocial !== false
     };
   }
@@ -541,6 +583,38 @@ class Component extends DCLogic {
     spot.classList.toggle('is-active', over);
     if (over) place(hero, spot, e.clientX, e.clientY);
   }, { passive: true });
+})();
+</script>
+<script>
+(function(){
+  // <image-slot> is leftover scaffolding from the design tool this site was
+  // built in: clicking an empty placeholder, or dragging a file onto ANY
+  // slot, opens a native file picker / swaps the image — neither is gated
+  // on the editor runtime being present. Intercepted here at capture time
+  // (before the component's own shadow-DOM listeners see the event) rather
+  // than edited in image-slot.js, which is a do-not-edit vendor file.
+  ['click', 'dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(type){
+    document.addEventListener(type, function(e){
+      if (e.target && e.target.tagName === 'IMAGE-SLOT') e.stopPropagation();
+    }, true);
+  });
+})();
+</script>
+<script>
+(function(){
+  var THRESHOLD = 40;
+  var ticking = false;
+  function update(){
+    var header = document.getElementById('reced-header');
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > THRESHOLD);
+  }
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    setTimeout(function(){ update(); ticking = false; }, 100);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  update();
 })();
 </script>
 </body>
