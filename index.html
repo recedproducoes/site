@@ -736,6 +736,38 @@ class Component extends DCLogic {
 (function(){
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  // Lightweight, always-on: the hero (photo + text together) dims out once
+  // the section actually starts rising off screen — not tied to the frame
+  // scrub below, so it stays cheap on phones that skip that effect.
+  var fadeTicking = false;
+  function updateFade(){
+    var hero = document.getElementById('hero');
+    if (!hero) return;
+    var heroRect = hero.getBoundingClientRect();
+    var risenAmount = Math.max(0, -heroRect.top);
+    var riseProgress = heroRect.height > 0 ? Math.min(1, risenAmount / heroRect.height) : 0;
+    var FADE_START = 0.2;
+    var heroOpacity = riseProgress <= FADE_START ? 1 : Math.max(0, 1 - (riseProgress - FADE_START) / (1 - FADE_START));
+    hero.style.opacity = String(heroOpacity);
+  }
+  function onFadeScroll(){
+    if (fadeTicking) return;
+    fadeTicking = true;
+    requestAnimationFrame(function(){ updateFade(); fadeTicking = false; });
+  }
+  window.addEventListener('scroll', onFadeScroll, { passive: true });
+  window.addEventListener('resize', onFadeScroll);
+  updateFade();
+
+  // The 70-frame orbit scrub is the heaviest effect on the page (per-scroll
+  // image swaps plus a standing interval). On phones it was costing enough
+  // paint time to visibly stutter/stick while scrolling through the hero —
+  // the other pages, which don't run this, never had that problem. Desktop
+  // keeps the full effect; phones/touch just get the static first frame
+  // with its fade-in.
+  var isMobile = window.matchMedia && window.matchMedia('(max-width: 860px), (hover: none), (pointer: coarse)').matches;
+  if (isMobile) return;
+
   var FRAME_COUNT = 70;
   var frames = [];
   for (var i = 1; i <= FRAME_COUNT; i++) {
@@ -783,21 +815,6 @@ class Component extends DCLogic {
     if (next !== lastNext) { b.src = frames[next]; lastNext = next; }
     a.style.opacity = String(1 - frac);
     b.style.opacity = String(frac);
-
-    // Everything in the hero (photo and text alike) dims out together, but
-    // only once the section actually starts rising off screen — not while
-    // it's still pinned cycling through frames. While pinned, the sticky
-    // hero's own top stays at 0; it only goes negative once scrolling has
-    // used up the pin and the section resumes normal flow, rising away.
-    var hero = document.getElementById('hero');
-    if (hero) {
-      var heroRect = hero.getBoundingClientRect();
-      var risenAmount = Math.max(0, -heroRect.top);
-      var riseProgress = heroRect.height > 0 ? Math.min(1, risenAmount / heroRect.height) : 0;
-      var FADE_START = 0.2;
-      var heroOpacity = riseProgress <= FADE_START ? 1 : Math.max(0, 1 - (riseProgress - FADE_START) / (1 - FADE_START));
-      hero.style.opacity = String(heroOpacity);
-    }
   }
 
   function onScroll(){
