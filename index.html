@@ -72,8 +72,8 @@ a:hover [data-play-badge]{transform:scale(1.12)}
 /* Delight: an unfilled media slot reads as a stage on standby, not a broken placeholder —
    a slow accent breath echoing The Dark Stage north star and hesed's steadiness. */
 image-slot{color:var(--accent)}
-image-slot::part(ring){border-color:var(--accent);animation:recedStandbyRing 4s ease-in-out infinite}
-image-slot::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
+image-slot:not([data-filled])::part(ring){border-color:var(--accent);animation:recedStandbyRing 4s ease-in-out infinite}
+image-slot:not([data-filled])::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
 @keyframes recedStandbyRing{0%,100%{opacity:.22}50%{opacity:.48}}
 @keyframes recedStandbyGlow{
   0%,100%{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%)}
