@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfólio — RECED Produções</title>
+<title>Portfólio | RECED Produções</title>
 <meta name="description" content="Todos os projetos da RECED Produções: clipes autorais, cobertura de eventos ao vivo e conteúdo institucional.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,38 +55,75 @@ header.is-scrolled img{height:32px!important}
 .filter-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:20px;padding:0 clamp(20px,5vw,64px) clamp(80px,10vw,128px)}
-.tile{position:relative;display:block;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev);cursor:pointer;transition:border-color .2s ease;text-align:left;padding:0;color:inherit;width:100%}
+.tile{position:relative;display:flex;flex-direction:column;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev);cursor:pointer;transition:border-color .2s ease;text-align:left;padding:0;color:inherit;width:100%}
 .tile:hover{border-color:var(--accent)}
 .tile .thumb{aspect-ratio:16/9;background:var(--bg-elev) center/cover no-repeat;position:relative}
 .tile .thumb.empty::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%)}
-.tile .caption{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:18px;pointer-events:none;background:linear-gradient(to top,rgba(13,12,11,.92),rgba(13,12,11,0))}
-.tile .caption .titles{display:flex;flex-direction:column;gap:5px}
-.tile .caption .titles strong{font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);font-weight:600}
+.tile .caption{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px}
+.tile .caption .titles{display:flex;flex-direction:column;gap:5px;min-width:0}
+.tile .caption .titles strong{font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);font-weight:600;line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .tile .caption .titles span{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)}
 .tile .play-badge{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--bg);transition:transform .2s var(--ease-out)}
 .tile:hover .play-badge{transform:scale(1.12)}
 .tile:not(.has-video) .play-badge{opacity:.35}
 .empty-state{padding:0 clamp(20px,5vw,64px) 96px;color:var(--text-2);font-size:14px}
 
-footer{border-top:1px solid var(--border);padding:clamp(48px,6vw,72px) clamp(20px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(32px,5vw,64px);align-items:start}
-footer img{height:46px;width:auto;display:block}
-.social-row{display:flex;gap:12px}
-.social-row a{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--border);border-radius:2px;color:var(--text-2);transition:.2s}
+footer{border-top:1px solid var(--border);padding:clamp(24px,3vw,32px) clamp(20px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(20px,3vw,32px);align-items:start}
+footer img{height:32px;width:auto;display:block;align-self:flex-start}
+.social-row{display:flex;gap:8px}
+.social-row a{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:2px;color:var(--text-2);transition:.2s}
 .social-row a:hover{border-color:var(--accent);color:var(--accent)}
-footer nav{display:flex;flex-direction:column;gap:12px}
-footer nav a{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2);transition:color .2s ease}
+footer nav{display:flex;flex-direction:column;gap:7px}
+footer nav a{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2);transition:color .2s ease}
 footer nav a:hover{color:var(--accent)}
+
+/* Delight: the isolated "Hesed" signature reveals the word's meaning on discovery.
+   Same treatment as index.html, for consistency across the site. */
+.reced-hesed-mark{position:relative;cursor:help}
+.reced-hesed-mark::after{
+  content:attr(data-hesed-meaning);
+  position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%) translateY(4px);
+  width:max-content;max-width:230px;
+  background:var(--bg-elev);color:var(--text-2);border:1px solid var(--border);border-radius:3px;
+  padding:12px 16px;font-family:'Inter',sans-serif;font-size:11px;font-style:normal;font-weight:400;
+  letter-spacing:.02em;line-height:1.55;text-transform:none;
+  opacity:0;pointer-events:none;box-shadow:0 12px 32px rgba(0,0,0,.4);z-index:5;
+  transition:opacity .2s ease,transform .2s var(--ease-out);
+}
+.reced-hesed-mark::before{
+  content:'';position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%) translateY(4px);
+  border:6px solid transparent;border-top-color:var(--bg-elev);
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s var(--ease-out);
+}
+.reced-hesed-mark:hover::after,.reced-hesed-mark:focus-visible::after,
+.reced-hesed-mark:hover::before,.reced-hesed-mark:focus-visible::before{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
 
 /* Lightbox */
 .lightbox{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(9,6,5,.92);backdrop-filter:blur(6px)}
 .lightbox.open{display:flex}
-.lightbox-inner{position:relative;width:100%;max-width:980px;aspect-ratio:16/9;background:#000;border-radius:3px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.lightbox-inner{position:relative;width:100%;max-width:980px;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6);transform-origin:center center}
 .lightbox-inner iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .lightbox-close{position:absolute;top:12px;right:12px;z-index:1;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;transition:.2s}
 .lightbox-close:hover{border-color:var(--accent);color:var(--accent)}
 
+/* Scroll reveal: same signature motion as index.html, for consistency. */
+@keyframes recedRise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px)}
+.reveal.is-visible{animation:recedRise .7s var(--ease-out) forwards}
+.reveal-stagger>*{opacity:0;transform:translateY(24px)}
+.reveal-stagger.is-visible>*{animation:recedRise .6s var(--ease-out) forwards}
+.reveal-stagger.is-visible>*:nth-child(1){animation-delay:0s}
+.reveal-stagger.is-visible>*:nth-child(2){animation-delay:.06s}
+.reveal-stagger.is-visible>*:nth-child(3){animation-delay:.12s}
+.reveal-stagger.is-visible>*:nth-child(4){animation-delay:.18s}
+.reveal-stagger.is-visible>*:nth-child(5){animation-delay:.24s}
+.reveal-stagger.is-visible>*:nth-child(6){animation-delay:.3s}
+
 @media (prefers-reduced-motion:reduce){
-  .tile,.play-badge,.lightbox-close{transition:none!important}
+  .tile,.play-badge,.lightbox-close,.lightbox-inner{transition:none!important}
+  .reveal,.reveal-stagger>*{animation:none!important;opacity:1!important;transform:none!important}
 }
 </style>
 </head>
@@ -99,29 +136,30 @@ footer nav a:hover{color:var(--accent)}
     <a href="./index.html#sobre">Sobre</a>
     <a href="./index.html#servicos">Serviços</a>
     <a href="./portfolio.html" style="color:var(--accent)">Portfólio</a>
-    <a href="./index.html#contato">Contato</a>
-    <a href="./index.html#contato" class="cta">Fale com a gente</a>
+    <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener">Contato</a>
+    <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" class="cta">Fale com a gente</a>
   </nav>
 </header>
 
-<div class="page-head">
+<div class="page-head reveal">
   <a class="back-link" href="./index.html#portfolio">← Voltar para a home</a>
   <h1>TODOS OS<br>PROJETOS</h1>
   <p>Clipes autorais, cobertura de eventos ao vivo e conteúdo institucional. Clique em qualquer projeto para assistir.</p>
 </div>
 
 <div class="filters" id="filters"></div>
-<div class="grid" id="grid"></div>
+<div class="grid reveal-stagger" id="grid"></div>
 <p class="empty-state hidden" id="empty-state">Nenhum projeto nessa categoria ainda.</p>
 
 <footer>
   <div style="display:flex;flex-direction:column;gap:18px">
     <img src="./assets/reced-logo-lado-trim.png" alt="RECED Produções">
-    <div style="font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--text-2);line-height:2">Música · Vídeo · Experiências<br>A fé em movimento.</div>
+    <div style="font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2);line-height:1.7">Música · Vídeo · Experiências<br>A fé em movimento.</div>
     <div class="social-row">
-      <a href="https://www.youtube.com/@RECEDPRODU%C3%87%C3%95ES" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.8-.5-5.6a2.9 2.9 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.4a2.9 2.9 0 0 0-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6a2.9 2.9 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.4a2.9 2.9 0 0 0 2-2C23 15.8 23 12 23 12zM9.8 15.4V8.6l5.9 3.4z"></path></svg></a>
-      <a href="https://www.instagram.com/recedproducoes/" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"></circle></svg></a>
-      <a href="./index.html#hero"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.8.8 0 0 1-1.1.3c-2.9-1.8-6.6-2.2-10.9-1.2a.8.8 0 1 1-.3-1.5c4.7-1.1 8.8-.6 12 1.4.4.2.5.7.3 1zm1.2-2.8a1 1 0 0 1-1.3.3c-3.3-2-8.4-2.6-12.3-1.4a1 1 0 0 1-.6-1.9c4.5-1.3 10-.7 13.8 1.6.4.3.6.9.4 1.4zm.1-2.9C14.2 8.4 8 8.2 4.6 9.3a1.2 1.2 0 1 1-.7-2.3C7.9 5.8 14.7 6 19 8.6a1.2 1.2 0 0 1-1.1 2.1z"></path></svg></a>
+      <a href="https://www.youtube.com/channel/UCdA_q51T2DGOSemT7l9LWPQ?sub_confirmation=1" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.8-.5-5.6a2.9 2.9 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.4a2.9 2.9 0 0 0-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6a2.9 2.9 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.4a2.9 2.9 0 0 0 2-2C23 15.8 23 12 23 12zM9.8 15.4V8.6l5.9 3.4z"></path></svg></a>
+      <a href="https://www.instagram.com/recedproducoes/" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"></circle></svg></a>
+      <a href="https://www.facebook.com/861335663725649" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8.3h2.8l.4-3.2h-3.2V7.4c0-.9.3-1.6 1.6-1.6h1.7V2.9C16.5 2.9 15.4 2.8 14.2 2.8c-2.6 0-4.4 1.6-4.4 4.5v2.2H7v3.2h2.8V21h3.7z"></path></svg></a>
+      <a href="./index.html#hero"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.8.8 0 0 1-1.1.3c-2.9-1.8-6.6-2.2-10.9-1.2a.8.8 0 1 1-.3-1.5c4.7-1.1 8.8-.6 12 1.4.4.2.5.7.3 1zm1.2-2.8a1 1 0 0 1-1.3.3c-3.3-2-8.4-2.6-12.3-1.4a1 1 0 0 1-.6-1.9c4.5-1.3 10-.7 13.8 1.6.4.3.6.9.4 1.4zm.1-2.9C14.2 8.4 8 8.2 4.6 9.3a1.2 1.2 0 1 1-.7-2.3C7.9 5.8 14.7 6 19 8.6a1.2 1.2 0 0 1-1.1 2.1z"></path></svg></a>
     </div>
   </div>
   <nav>
@@ -129,12 +167,12 @@ footer nav a:hover{color:var(--accent)}
     <a href="./index.html#sobre">Sobre</a>
     <a href="./index.html#servicos">Serviços</a>
     <a href="./portfolio.html">Portfólio</a>
-    <a href="./index.html#contato">Contato</a>
+    <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener">Contato</a>
   </nav>
-  <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
-    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:2.2rem;color:var(--accent);line-height:1">Hesed</div>
-    <div style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);line-height:2">Amor leal.<br>Sempre.</div>
-    <div style="margin-top:18px;font-size:10.5px;line-height:1.8;color:var(--text-2)">© 2025 RECED Produções.<br>Todos os direitos reservados.</div>
+  <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+    <div class="reced-hesed-mark" tabindex="0" data-hesed-meaning="Do hebraico ḥesed: o amor leal, constante e misericordioso de Deus." style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.5rem;color:var(--accent);line-height:1">Hesed</div>
+    <div style="font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--text-2);line-height:1.7">Amor leal. Sempre.</div>
+    <div style="margin-top:8px;font-size:10px;line-height:1.6;color:var(--text-2)">© 2025 RECED Produções. Todos os direitos reservados.</div>
   </div>
 </footer>
 
@@ -205,24 +243,69 @@ footer nav a:hover{color:var(--accent)}
         var idx = parseInt(tile.dataset.idx, 10);
         var list = activeCat === 'Todos' ? allItems : allItems.filter(function(i){ return i.catLabel === activeCat; });
         var it = list[idx];
-        if (it.videoId) openLightbox(it.videoId);
+        if (it.videoId) openLightbox(it.videoId, tile);
       });
     });
   }
 
-  function openLightbox(videoId){
+  // FLIP transition: the lightbox box is born at the clicked tile's exact
+  // position and size, then animates to its full centered size — and
+  // reverses back into the tile on close, instead of just fading in place.
+  var lastOriginRect = null;
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function flipTransform(originRect, finalRect){
+    var scaleX = originRect.width / finalRect.width;
+    var scaleY = originRect.height / finalRect.height;
+    var dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
+    var dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
+    return 'translate(' + dx + 'px,' + dy + 'px) scale(' + scaleX + ',' + scaleY + ')';
+  }
+
+  var FLIP_DURATION = 380;
+  var FLIP_EASING = 'cubic-bezier(.16,1,.3,1)';
+  var currentFlipAnim = null;
+
+  function openLightbox(videoId, originEl){
     var lb = document.getElementById('lightbox');
+    var inner = document.querySelector('.lightbox-inner');
     var wrap = document.getElementById('lightbox-frame-wrap');
     wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1" title="Vídeo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
     lb.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    if (currentFlipAnim) currentFlipAnim.cancel();
+
+    if (reducedMotion || !originEl || !inner.animate) { lastOriginRect = null; return; }
+
+    lastOriginRect = originEl.getBoundingClientRect();
+    var finalRect = inner.getBoundingClientRect();
+    currentFlipAnim = inner.animate(
+      [{ transform: flipTransform(lastOriginRect, finalRect) }, { transform: 'none' }],
+      { duration: FLIP_DURATION, easing: FLIP_EASING, fill: 'forwards' }
+    );
   }
 
   function closeLightbox(){
     var lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-frame-wrap').innerHTML = '';
-    lb.classList.remove('open');
-    document.body.style.overflow = '';
+    var inner = document.querySelector('.lightbox-inner');
+
+    function finish(){
+      document.getElementById('lightbox-frame-wrap').innerHTML = '';
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (currentFlipAnim) currentFlipAnim.cancel();
+
+    if (reducedMotion || !lastOriginRect || !inner.animate) { finish(); return; }
+
+    var finalRect = inner.getBoundingClientRect();
+    currentFlipAnim = inner.animate(
+      [{ transform: 'none' }, { transform: flipTransform(lastOriginRect, finalRect) }],
+      { duration: FLIP_DURATION, easing: FLIP_EASING, fill: 'forwards' }
+    );
+    currentFlipAnim.finished.then(finish, function(){ /* cancelled: a new open() took over */ });
   }
 
   document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
@@ -241,12 +324,16 @@ footer nav a:hover{color:var(--accent)}
     var { data, error } = await client.from('portfolio_items').select('*').order('sort_order');
     if (error || !data) return;
     allItems = data.map(function(it){
+      var vid = youtubeId(it.youtube_url);
+      var imageUrl = it.image_path
+        ? bucket.getPublicUrl(it.image_path).data.publicUrl
+        : (vid ? 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg' : '');
       return {
         title: it.title,
         kind: it.kind,
         catLabel: CAT_LABELS[it.category] || it.category,
-        imageUrl: it.image_path ? bucket.getPublicUrl(it.image_path).data.publicUrl : '',
-        videoId: youtubeId(it.youtube_url)
+        imageUrl: imageUrl,
+        videoId: vid
       };
     });
     renderGrid();
@@ -271,6 +358,46 @@ footer nav a:hover{color:var(--accent)}
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   update();
+})();
+</script>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function isNear(el){
+    var r = el.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    return r.top < vh * 0.88 && r.bottom > 0;
+  }
+
+  function check(){
+    var all = document.querySelectorAll('.reveal, .reveal-stagger');
+    var remaining = 0;
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.classList.contains('is-visible')) continue;
+      if (isNear(el)) { el.classList.add('is-visible'); }
+      else { remaining++; }
+    }
+    return remaining;
+  }
+
+  var ticking = false;
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    setTimeout(function(){ check(); ticking = false; }, 100);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+
+  var attempts = 0;
+  var poll = setInterval(function(){
+    var remaining = check();
+    attempts++;
+    if (remaining === 0 || attempts > 100) clearInterval(poll);
+  }, 200);
 })();
 </script>
 </body>

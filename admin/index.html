@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RECED — Admin</title>
+<title>RECED | Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -59,7 +59,7 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
 <div id="login-view" class="login-wrap hidden">
   <form id="login-form" class="login-card card">
     <div>
-      <h1 style="font-size:22px">RECED — Admin</h1>
+      <h1 style="font-size:22px">RECED | Admin</h1>
       <p style="color:var(--text-2);font-size:13px;margin:6px 0 0">Entre para gerenciar portfólio e depoimentos.</p>
     </div>
     <div id="login-msg"></div>
@@ -77,7 +77,7 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
 
 <div id="app-view" class="hidden">
   <div class="topbar">
-    <strong style="font-family:'Space Grotesk',sans-serif">RECED — Admin</strong>
+    <strong style="font-family:'Space Grotesk',sans-serif">RECED | Admin</strong>
     <div class="row">
       <a href="../index.html" target="_blank" style="font-size:12px;color:var(--text-2)">Ver site ↗</a>
       <button class="btn-ghost" id="logout-btn">Sair</button>
@@ -87,6 +87,7 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
     <div class="tabs">
       <button class="tab active" data-tab="portfolio">Portfólio</button>
       <button class="tab" data-tab="testimonials">Depoimentos</button>
+      <button class="tab" data-tab="gallery">Bastidores</button>
     </div>
 
     <section id="tab-portfolio" class="section active">
@@ -108,7 +109,15 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
             </div>
             <div class="field"><label for="p-order">Ordem</label><input id="p-order" type="number" value="0"></div>
             <div class="field" style="grid-column:1/-1"><label for="p-youtube">Link do YouTube (opcional)</label><input id="p-youtube" type="url" placeholder="https://youtube.com/watch?v=..."></div>
-            <div class="field" style="grid-column:1/-1"><label for="p-image">Foto de capa</label><input id="p-image" type="file" accept="image/png,image/jpeg,image/webp"></div>
+            <div class="field" style="grid-column:1/-1">
+              <label for="p-image">Foto de capa</label>
+              <div id="p-image-current" class="hidden row" style="margin-bottom:8px;gap:10px">
+                <img id="p-image-current-thumb" style="width:56px;height:56px;object-fit:cover;border-radius:4px;background:var(--bg-elev)" alt="">
+                <button type="button" class="btn-danger" id="p-image-remove">Remover foto atual</button>
+              </div>
+              <input id="p-image" type="file" accept="image/png,image/jpeg,image/webp">
+              <input type="hidden" id="p-image-cleared" value="">
+            </div>
             <div class="row" style="grid-column:1/-1">
               <button type="submit" class="btn" id="portfolio-submit">Adicionar</button>
               <button type="button" class="btn-ghost hidden" id="portfolio-cancel">Cancelar edição</button>
@@ -130,7 +139,15 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
             <div class="field"><label for="t-name">Nome</label><input id="t-name" required></div>
             <div class="field"><label for="t-role">Cargo / Igreja</label><input id="t-role"></div>
             <div class="field"><label for="t-order">Ordem</label><input id="t-order" type="number" value="0"></div>
-            <div class="field"><label for="t-avatar">Foto</label><input id="t-avatar" type="file" accept="image/png,image/jpeg,image/webp"></div>
+            <div class="field">
+              <label for="t-avatar">Foto</label>
+              <div id="t-avatar-current" class="hidden row" style="margin-bottom:8px;gap:10px">
+                <img id="t-avatar-current-thumb" style="width:44px;height:44px;object-fit:cover;border-radius:50%;background:var(--bg-elev)" alt="">
+                <button type="button" class="btn-danger" id="t-avatar-remove">Remover foto atual</button>
+              </div>
+              <input id="t-avatar" type="file" accept="image/png,image/jpeg,image/webp">
+              <input type="hidden" id="t-avatar-cleared" value="">
+            </div>
             <div class="row" style="grid-column:1/-1">
               <button type="submit" class="btn" id="testimonial-submit">Adicionar</button>
               <button type="button" class="btn-ghost hidden" id="testimonial-cancel">Cancelar edição</button>
@@ -139,6 +156,36 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
         </div>
       </div>
       <div id="testimonials-list" class="grid" style="grid-template-columns:1fr"></div>
+    </section>
+
+    <section id="tab-gallery" class="section">
+      <div class="grid" style="grid-template-columns:1fr;margin-bottom:32px">
+        <div class="card">
+          <h2 style="font-size:16px;margin-bottom:16px" id="gallery-form-title">Novo item de bastidores</h2>
+          <p style="color:var(--text-2);font-size:12px;margin:-8px 0 16px">Aparece na página "Quem Somos". Pode ser uma foto, um link de vídeo do YouTube, ou os dois.</p>
+          <div id="gallery-msg"></div>
+          <form id="gallery-form" class="grid" style="grid-template-columns:1fr 1fr">
+            <input type="hidden" id="g-id">
+            <div class="field" style="grid-column:1/-1"><label for="g-caption">Legenda</label><input id="g-caption" placeholder="Ex: Bastidores de gravação" required></div>
+            <div class="field"><label for="g-order">Ordem</label><input id="g-order" type="number" value="0"></div>
+            <div class="field"><label for="g-youtube">Link do YouTube (opcional)</label><input id="g-youtube" type="url" placeholder="https://youtube.com/watch?v=..."></div>
+            <div class="field" style="grid-column:1/-1">
+              <label for="g-image">Foto</label>
+              <div id="g-image-current" class="hidden row" style="margin-bottom:8px;gap:10px">
+                <img id="g-image-current-thumb" style="width:56px;height:56px;object-fit:cover;border-radius:4px;background:var(--bg-elev)" alt="">
+                <button type="button" class="btn-danger" id="g-image-remove">Remover foto atual</button>
+              </div>
+              <input id="g-image" type="file" accept="image/png,image/jpeg,image/webp">
+              <input type="hidden" id="g-image-cleared" value="">
+            </div>
+            <div class="row" style="grid-column:1/-1">
+              <button type="submit" class="btn" id="gallery-submit">Adicionar</button>
+              <button type="button" class="btn-ghost hidden" id="gallery-cancel">Cancelar edição</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div id="gallery-list" class="grid" style="grid-template-columns:1fr"></div>
     </section>
   </div>
 </div>
@@ -155,6 +202,18 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
 
   function publicUrl(path){ return path ? bucket.getPublicUrl(path).data.publicUrl : ''; }
 
+  function youtubeId(url){
+    if (!url) return null;
+    var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function thumbFor(imagePath, youtubeUrl){
+    if (imagePath) return publicUrl(imagePath);
+    var vid = youtubeId(youtubeUrl);
+    return vid ? 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg' : '';
+  }
+
   function showMsg(elId, text, isError){
     var el = document.getElementById(elId);
     el.innerHTML = text ? '<div class="msg ' + (isError ? 'msg-error' : 'msg-ok') + '">' + text + '</div>' : '';
@@ -168,6 +227,7 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
       appView.classList.remove('hidden');
       loadPortfolio();
       loadTestimonials();
+      loadGallery();
     } else {
       appView.classList.add('hidden');
       loginView.classList.remove('hidden');
@@ -209,10 +269,17 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
   function resetPortfolioForm(){
     portfolioForm.reset();
     document.getElementById('portfolio-id').value = '';
+    document.getElementById('p-image-cleared').value = '';
+    document.getElementById('p-image-current').classList.add('hidden');
     document.getElementById('portfolio-form-title').textContent = 'Novo item do portfólio';
     document.getElementById('portfolio-submit').textContent = 'Adicionar';
     portfolioCancel.classList.add('hidden');
   }
+
+  document.getElementById('p-image-remove').addEventListener('click', function(){
+    document.getElementById('p-image-cleared').value = '1';
+    document.getElementById('p-image-current').classList.add('hidden');
+  });
 
   portfolioCancel.addEventListener('click', resetPortfolioForm);
 
@@ -221,7 +288,7 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
     var list = document.getElementById('portfolio-list');
     if (error) { list.innerHTML = ''; showMsg('portfolio-msg', 'Erro ao carregar: ' + error.message, true); return; }
     list.innerHTML = (data || []).map(function(it){
-      var img = publicUrl(it.image_path);
+      var img = thumbFor(it.image_path, it.youtube_url);
       return '<div class="item-row" data-id="' + it.id + '">' +
         (img ? '<img src="' + img + '" alt="">' : '<div style="width:56px;height:56px;border-radius:4px;background:var(--bg-elev);flex:none"></div>') +
         '<div class="meta"><strong>' + escapeHtml(it.title) + '</strong>' +
@@ -251,6 +318,13 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
       document.getElementById('p-category').value = data.category || 'musica';
       document.getElementById('p-order').value = data.sort_order || 0;
       document.getElementById('p-youtube').value = data.youtube_url || '';
+      document.getElementById('p-image-cleared').value = '';
+      if (data.image_path) {
+        document.getElementById('p-image-current-thumb').src = publicUrl(data.image_path);
+        document.getElementById('p-image-current').classList.remove('hidden');
+      } else {
+        document.getElementById('p-image-current').classList.add('hidden');
+      }
       document.getElementById('portfolio-form-title').textContent = 'Editar item do portfólio';
       document.getElementById('portfolio-submit').textContent = 'Salvar alterações';
       portfolioCancel.classList.remove('hidden');
@@ -278,6 +352,8 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
         var { error: upErr } = await bucket.upload(path, file, { upsert: true });
         if (upErr) throw upErr;
         payload.image_path = path;
+      } else if (document.getElementById('p-image-cleared').value === '1') {
+        payload.image_path = null;
       }
       if (id) {
         var { error } = await client.from('portfolio_items').update(payload).eq('id', id);
@@ -303,10 +379,17 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
   function resetTestimonialForm(){
     testimonialForm.reset();
     document.getElementById('t-id').value = '';
+    document.getElementById('t-avatar-cleared').value = '';
+    document.getElementById('t-avatar-current').classList.add('hidden');
     document.getElementById('testimonial-form-title').textContent = 'Novo depoimento';
     document.getElementById('testimonial-submit').textContent = 'Adicionar';
     testimonialCancel.classList.add('hidden');
   }
+
+  document.getElementById('t-avatar-remove').addEventListener('click', function(){
+    document.getElementById('t-avatar-cleared').value = '1';
+    document.getElementById('t-avatar-current').classList.add('hidden');
+  });
 
   testimonialCancel.addEventListener('click', resetTestimonialForm);
 
@@ -344,6 +427,13 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
       document.getElementById('t-name').value = data.author_name || '';
       document.getElementById('t-role').value = data.author_role || '';
       document.getElementById('t-order').value = data.sort_order || 0;
+      document.getElementById('t-avatar-cleared').value = '';
+      if (data.avatar_path) {
+        document.getElementById('t-avatar-current-thumb').src = publicUrl(data.avatar_path);
+        document.getElementById('t-avatar-current').classList.remove('hidden');
+      } else {
+        document.getElementById('t-avatar-current').classList.add('hidden');
+      }
       document.getElementById('testimonial-form-title').textContent = 'Editar depoimento';
       document.getElementById('testimonial-submit').textContent = 'Salvar alterações';
       testimonialCancel.classList.remove('hidden');
@@ -370,6 +460,8 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
         var { error: upErr } = await bucket.upload(path, file, { upsert: true });
         if (upErr) throw upErr;
         payload.avatar_path = path;
+      } else if (document.getElementById('t-avatar-cleared').value === '1') {
+        payload.avatar_path = null;
       }
       if (id) {
         var { error } = await client.from('testimonials').update(payload).eq('id', id);
@@ -383,6 +475,112 @@ label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t
       loadTestimonials();
     } catch (err) {
       showMsg('testimonial-msg', 'Erro ao salvar: ' + err.message, true);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // ---------- Gallery (Bastidores / Quem Somos) ----------
+  var galleryForm = document.getElementById('gallery-form');
+  var galleryCancel = document.getElementById('gallery-cancel');
+
+  function resetGalleryForm(){
+    galleryForm.reset();
+    document.getElementById('g-id').value = '';
+    document.getElementById('g-image-cleared').value = '';
+    document.getElementById('g-image-current').classList.add('hidden');
+    document.getElementById('gallery-form-title').textContent = 'Novo item de bastidores';
+    document.getElementById('gallery-submit').textContent = 'Adicionar';
+    galleryCancel.classList.add('hidden');
+  }
+
+  document.getElementById('g-image-remove').addEventListener('click', function(){
+    document.getElementById('g-image-cleared').value = '1';
+    document.getElementById('g-image-current').classList.add('hidden');
+  });
+
+  galleryCancel.addEventListener('click', resetGalleryForm);
+
+  async function loadGallery(){
+    var { data, error } = await client.from('about_gallery').select('*').order('sort_order');
+    var list = document.getElementById('gallery-list');
+    if (error) { list.innerHTML = ''; showMsg('gallery-msg', 'Erro ao carregar: ' + error.message, true); return; }
+    list.innerHTML = (data || []).map(function(g){
+      var img = thumbFor(g.image_path, g.youtube_url);
+      return '<div class="item-row" data-id="' + g.id + '">' +
+        (img ? '<img src="' + img + '" alt="">' : '<div style="width:56px;height:56px;border-radius:4px;background:var(--bg-elev);flex:none"></div>') +
+        '<div class="meta"><strong>' + escapeHtml(g.caption) + '</strong>' +
+        '<span>' + (g.youtube_url ? 'tem link' : 'sem link') + '</span></div>' +
+        '<button class="btn-ghost" data-action="edit-gallery" style="padding:6px 12px;font-size:12px">Editar</button>' +
+        '<button class="btn-danger" data-action="delete-gallery">Excluir</button>' +
+        '</div>';
+    }).join('') || '<p style="color:var(--text-2);font-size:13px">Nenhum item ainda.</p>';
+  }
+
+  document.getElementById('gallery-list').addEventListener('click', async function(e){
+    var row = e.target.closest('.item-row');
+    if (!row) return;
+    var id = row.dataset.id;
+    if (e.target.dataset.action === 'delete-gallery') {
+      if (!confirm('Excluir este item de bastidores?')) return;
+      var { error } = await client.from('about_gallery').delete().eq('id', id);
+      if (error) { showMsg('gallery-msg', 'Erro ao excluir: ' + error.message, true); return; }
+      loadGallery();
+    }
+    if (e.target.dataset.action === 'edit-gallery') {
+      var { data, error } = await client.from('about_gallery').select('*').eq('id', id).single();
+      if (error) return;
+      document.getElementById('g-id').value = data.id;
+      document.getElementById('g-caption').value = data.caption || '';
+      document.getElementById('g-order').value = data.sort_order || 0;
+      document.getElementById('g-youtube').value = data.youtube_url || '';
+      document.getElementById('g-image-cleared').value = '';
+      if (data.image_path) {
+        document.getElementById('g-image-current-thumb').src = publicUrl(data.image_path);
+        document.getElementById('g-image-current').classList.remove('hidden');
+      } else {
+        document.getElementById('g-image-current').classList.add('hidden');
+      }
+      document.getElementById('gallery-form-title').textContent = 'Editar item de bastidores';
+      document.getElementById('gallery-submit').textContent = 'Salvar alterações';
+      galleryCancel.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+
+  galleryForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var submitBtn = document.getElementById('gallery-submit');
+    submitBtn.disabled = true;
+    showMsg('gallery-msg', '');
+    try {
+      var id = document.getElementById('g-id').value || null;
+      var payload = {
+        caption: document.getElementById('g-caption').value.trim(),
+        sort_order: parseInt(document.getElementById('g-order').value, 10) || 0,
+        youtube_url: document.getElementById('g-youtube').value.trim() || null
+      };
+      var file = document.getElementById('g-image').files[0];
+      if (file) {
+        var path = 'about/' + Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        var { error: upErr } = await bucket.upload(path, file, { upsert: true });
+        if (upErr) throw upErr;
+        payload.image_path = path;
+      } else if (document.getElementById('g-image-cleared').value === '1') {
+        payload.image_path = null;
+      }
+      if (id) {
+        var { error } = await client.from('about_gallery').update(payload).eq('id', id);
+        if (error) throw error;
+      } else {
+        var { error } = await client.from('about_gallery').insert(payload);
+        if (error) throw error;
+      }
+      showMsg('gallery-msg', 'Salvo com sucesso.', false);
+      resetGalleryForm();
+      loadGallery();
+    } catch (err) {
+      showMsg('gallery-msg', 'Erro ao salvar: ' + err.message, true);
     } finally {
       submitBtn.disabled = false;
     }

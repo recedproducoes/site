@@ -69,16 +69,8 @@ a:hover [data-play-badge]{transform:scale(1.12)}
 /* Portfolio tiles replay their entrance on every filter cut, like an edit cut */
 .reced-tile{animation:recedTileIn .5s var(--ease-out) both}
 
-/* Delight: an unfilled media slot reads as a stage on standby, not a broken placeholder —
-   a slow accent breath echoing The Dark Stage north star and hesed's steadiness. */
 image-slot{color:var(--accent)}
-image-slot:not([data-filled])::part(ring){border-color:var(--accent);animation:recedStandbyRing 4s ease-in-out infinite}
-image-slot:not([data-filled])::part(empty){animation:recedStandbyGlow 4s ease-in-out infinite}
-@keyframes recedStandbyRing{0%,100%{opacity:.22}50%{opacity:.48}}
-@keyframes recedStandbyGlow{
-  0%,100%{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%)}
-  50%{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 26%,transparent),transparent 70%)}
-}
+image-slot::part(ring){display:none!important}
 
 /* Delight: the isolated "Hesed" signature reveals the word's meaning on discovery —
    the story already told in Sobre, resurfaced where curiosity strikes. */
@@ -135,12 +127,35 @@ image-slot:not([data-filled])::part(empty){animation:recedStandbyGlow 4s ease-in
    see the click/dragover/drop interceptor script below. */
 image-slot::part(empty){cursor:default}
 
+/* Hero scroll-scrub: two stacked frames crossfade instead of hard-cutting. */
+.reced-hero-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:opacity}
+
+/* image-slot's own cover-crop math assumes editing is available and can
+   under-scale non-16:9 sources (e.g. YouTube's 4:3 thumbnails), leaving
+   letterbox bars. Force a plain, always-correct CSS cover crop instead —
+   reframe/pan-zoom editing is already disabled on this public site, so
+   there is nothing lost by overriding its positioning. */
+image-slot::part(image){
+  width:100%!important;height:100%!important;max-width:none!important;
+  object-fit:cover!important;left:0!important;top:0!important;transform:none!important;
+}
+
+/* Video lightbox, opened from a portfolio tile with a FLIP grow/shrink effect. */
+.lightbox{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(9,6,5,.92);backdrop-filter:blur(6px)}
+.lightbox.open{display:flex}
+.lightbox-inner{position:relative;width:100%;max-width:980px;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6);transform-origin:center center}
+.lightbox-inner iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.lightbox-close{position:absolute;top:12px;right:12px;z-index:1;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;transition:.2s}
+.lightbox-close:hover{border-color:var(--accent);color:var(--accent)}
+
 @media (prefers-reduced-motion:reduce){
   .reced-hero-in>*,.reced-hero-side>*,.reced-line-y,.reveal,.reveal-stagger>*,.reced-tile{animation:none!important;opacity:1!important;transform:none!important}
   a:hover [data-play-badge]{transform:none}
   .reced-scroll-cue{animation:none!important;opacity:.5!important}
   image-slot::part(ring),image-slot::part(empty){animation:none!important}
   .reced-spotlight{display:none!important}
+  .reced-hero-pin{height:auto!important}
+  #hero{position:relative!important}
 }
 </style>
 </helmet>
@@ -154,14 +169,16 @@ image-slot::part(empty){cursor:default}
     <a href="#sobre" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Sobre</a>
     <a href="#servicos" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Serviços</a>
     <a href="./portfolio.html" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Portfólio</a>
-    <a href="#contato" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Contato</a>
-    <a href="#contato" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:10px 18px;border-radius:2px;white-space:nowrap" style-hover="background:var(--accent);color:var(--bg)">Fale com a gente</a>
+    <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--text)">Contato</a>
+    <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:10px 18px;border-radius:2px;white-space:nowrap" style-hover="background:var(--accent);color:var(--bg)">Fale com a gente</a>
   </nav>
 </header>
 
-<section id="hero" data-screen-label="Hero" style="position:relative;min-height:min(88vh,760px);display:flex;align-items:flex-end;overflow:hidden">
+<div class="reced-hero-pin" style="position:relative;height:180vh">
+<section id="hero" data-screen-label="Hero" style="position:sticky;top:0;min-height:min(88vh,760px);height:100vh;max-height:900px;display:flex;align-items:flex-end;overflow:hidden">
   <div style="position:absolute;inset:0">
-    <image-slot id="reced-hero" shape="rect" src="./uploads/RECED/hero.png" placeholder="Foto de palco / show ao vivo (fundo do hero)"></image-slot>
+    <img id="reced-hero-scrub" class="reced-hero-frame" src="./assets/hero-orbit/frame-01.jpg" alt="" style="opacity:1">
+    <img id="reced-hero-scrub-next" class="reced-hero-frame" alt="" style="opacity:0">
   </div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,rgba(13,12,11,.95) 12%,rgba(13,12,11,.72) 48%,rgba(13,12,11,.35) 100%)"></div>
   <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--bg) 2%,rgba(13,12,11,0) 38%)"></div>
@@ -169,7 +186,7 @@ image-slot::part(empty){cursor:default}
 
   <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;width:100%;padding:clamp(48px,8vw,104px) clamp(20px,5vw,64px) clamp(44px,6vw,72px)">
     <div class="reced-hero-in" style="max-width:720px;display:flex;flex-direction:column;gap:26px">
-      <h1 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.6rem,6.4vw,5.2rem);line-height:.95;letter-spacing:-.01em;text-wrap:balance">SONS<br>QUE <span style="color:var(--accent)">TRANSFORMAM.</span></h1>
+      <h1 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.6rem,6.4vw,5.2rem);line-height:.95;letter-spacing:-.01em;text-wrap:balance">SONS QUE<br><span style="color:var(--accent)">TRANSFORMAM.</span></h1>
       <div style="font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2)">Música &nbsp;·&nbsp; Vídeo &nbsp;·&nbsp; Experiências</div>
       <p style="margin:0;max-width:420px;font-size:15px;line-height:1.7;color:var(--text-2)">Produção audiovisual com propósito. Excelência técnica a serviço da mensagem.</p>
       <a href="#portfolio" style="display:flex;align-items:center;gap:16px;color:var(--text)" style-hover="color:var(--accent)">
@@ -189,18 +206,19 @@ image-slot::part(empty){cursor:default}
     <svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="1" y="1" width="12" height="20" rx="6"></rect><line x1="7" y1="6" x2="7" y2="10"></line></svg>
   </div>
 </section>
+</div>
 
 <section id="sobre" data-screen-label="Sobre" style="padding:clamp(80px,10vw,128px) clamp(20px,5vw,64px);display:flex;flex-direction:column;gap:clamp(56px,7vw,88px)">
   <div class="reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(32px,5vw,72px);align-items:center">
     <div style="position:relative;aspect-ratio:4/3;border-radius:3px;overflow:hidden">
-      <image-slot id="reced-sobre" shape="rect" src="./uploads/RECED/Proposito%20a.png" placeholder="Bastidores — mesa de som / estúdio"></image-slot>
+      <image-slot id="reced-sobre" shape="rect" src="./uploads/RECED/Proposito%20a.png" placeholder="Bastidores: mesa de som / estúdio"></image-slot>
       <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to right,transparent 72%,var(--bg) 100%)"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:24px;max-width:560px">
       <div style="font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent)">Sobre nós</div>
       <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,3.4vw,2.9rem);line-height:1.08;letter-spacing:.01em">MAIS QUE PRODUÇÃO.<br>UMA MENSAGEM <span style="color:var(--accent)">QUE PERMANECE.</span></h2>
-      <p style="margin:0;font-size:15px;line-height:1.75;color:var(--text-2)">A RECED Produções nasce do <em style="font-style:normal;color:var(--text)">hesed</em> — o amor leal, constante e misericordioso de Deus — e se move pela música, pela imagem e pela excelência técnica para servir à igreja e à sua mensagem.</p>
-      <a href="#portfolio" style="align-self:flex-start;display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);border:1px solid var(--border);padding:14px 22px;border-radius:2px" style-hover="border-color:var(--accent);color:var(--accent)">Conheça nossa história <span>→</span></a>
+      <p style="margin:0;font-size:15px;line-height:1.75;color:var(--text-2)">A RECED Produções nasce do <em style="font-style:normal;color:var(--text)">hesed</em>, o amor leal, constante e misericordioso de Deus, e se move pela música, pela imagem e pela excelência técnica para servir à igreja e à sua mensagem.</p>
+      <a href="./quem-somos.html" style="align-self:flex-start;display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);border:1px solid var(--border);padding:14px 22px;border-radius:2px" style-hover="border-color:var(--accent);color:var(--accent)">Conheça nossa história <span>→</span></a>
     </div>
   </div>
 
@@ -269,7 +287,7 @@ image-slot::part(empty){cursor:default}
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"><path d="M6 3v6M6 15v6M12 3v10M12 19v2M18 3v3M18 12v9"></path><path d="M3.5 12h5M9.5 16h5M15.5 9h5"></path></svg>
         <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;line-height:1.4">Mixagem e<br>Masterização</h3>
         <p style="margin:0;font-size:13.5px;line-height:1.65;color:var(--text-2)">Qualidade e clareza para a sua mensagem.</p>
-        <a href="#contato" style="margin-top:8px;align-self:flex-start;background:var(--accent);color:var(--bg);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:11px 16px;border-radius:2px;font-weight:600" style-hover="background:var(--text);color:var(--bg)">Solicitar orçamento</a>
+        <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" style="margin-top:8px;align-self:flex-start;background:var(--accent);color:var(--bg);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:11px 16px;border-radius:2px;font-weight:600" style-hover="background:var(--text);color:var(--bg)">Solicitar orçamento</a>
       </div>
     </article>
   </div>
@@ -281,19 +299,13 @@ image-slot::part(empty){cursor:default}
     <div style="font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--text-2);text-align:right;line-height:2">Histórias reais.<br>Impacto verdadeiro.</div>
   </div>
 
-  <div style="display:flex;flex-wrap:wrap;gap:10px">
-    <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
-      <button type="button" onClick="{{ f.select }}" style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;padding:11px 20px;border-radius:2px;cursor:pointer;transition:.18s;background:{{ f.bg }};color:{{ f.fg }};border:1px solid {{ f.bd }}">{{ f.label }}</button>
-    </sc-for>
-  </div>
-
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:20px">
     <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
-      <a href="{{ it.href }}" target="{{ it.target }}" rel="{{ it.rel }}" class="reced-tile" style="position:relative;display:block;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev)" style-hover="border-color:var(--accent)">
+      <a href="{{ it.href }}" target="{{ it.target }}" rel="{{ it.rel }}" data-video-id="{{ it.videoId }}" class="reced-tile" style="display:flex;flex-direction:column;border:1px solid var(--border);border-radius:3px;overflow:hidden;background:var(--bg-elev)" style-hover="border-color:var(--accent)">
         <div style="aspect-ratio:var(--tile-ar)"><image-slot shape="rect" src="{{ it.imageUrl }}" placeholder="{{ it.placeholder }}"></image-slot></div>
-        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:18px 18px 16px;pointer-events:none;background:linear-gradient(to top,rgba(13,12,11,.92),rgba(13,12,11,0))">
-          <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text)">{{ it.title }}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px">
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ it.title }}</div>
             <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)">{{ it.kind }}</div>
           </div>
           <span data-play-badge style="flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--bg)">
@@ -359,7 +371,7 @@ image-slot::part(empty){cursor:default}
     <div style="display:flex;flex-direction:column;gap:26px;max-width:520px">
       <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.02">VAMOS PRODUZIR<br>JUNTOS?</h2>
       <p style="margin:0;font-size:15px;line-height:1.75;color:var(--text-2)">Entre em contato e fale com a gente pelo WhatsApp. Vamos conversar sobre o seu projeto e como a RECED pode ajudar.</p>
-      <a href="https://wa.me/" target="_blank" rel="noopener" style="align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--accent);color:var(--bg);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:18px 28px;border-radius:2px" style-hover="background:var(--text);color:var(--bg)">
+      <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" style="align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--accent);color:var(--bg);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:18px 28px;border-radius:2px" style-hover="background:var(--text);color:var(--bg)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.9.5 3.68 1.4 5.22L2 22l5.06-1.55a9.8 9.8 0 0 0 4.98 1.35h.01c5.43 0 9.84-4.4 9.84-9.84S17.47 2 12.04 2zm5.7 13.9c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.13.08-1.82-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.15-.19-1.19-1.58-1.19-3.02s.76-2.14 1.03-2.43c.27-.3.58-.37.78-.37.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.83 2.01.9 2.16.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.6.17.29.76 1.25 1.63 2.03 1.12 1 2.06 1.3 2.36 1.45.29.14.46.12.63-.07.17-.19.72-.84.91-1.13.19-.29.39-.24.65-.14.26.09 1.69.8 1.98.94.29.15.48.22.55.34.07.12.07.7-.17 1.38z"></path></svg>
         Fale com a gente →
       </a>
@@ -371,27 +383,28 @@ image-slot::part(empty){cursor:default}
   </div>
 </section>
 
-<footer style="border-top:1px solid var(--border);padding:clamp(48px,6vw,72px) clamp(20px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(32px,5vw,64px);align-items:start">
-  <div style="display:flex;flex-direction:column;gap:18px">
-    <img src="./assets/reced-logo-lado-trim.png" alt="RECED Produções" style="height:46px;width:auto;display:block;align-self:flex-start">
-    <div style="font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--text-2);line-height:2">Música · Vídeo · Experiências<br>A fé em movimento.</div>
-    <div style="display:flex;gap:12px">
-      <a href="https://www.youtube.com/@RECEDPRODU%C3%87%C3%95ES" target="_blank" rel="noopener" style="display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.8-.5-5.6a2.9 2.9 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.4a2.9 2.9 0 0 0-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6a2.9 2.9 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.4a2.9 2.9 0 0 0 2-2C23 15.8 23 12 23 12zM9.8 15.4V8.6l5.9 3.4z"></path></svg></a>
-      <a href="https://www.instagram.com/recedproducoes/" target="_blank" rel="noopener" style="display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"></circle></svg></a>
-      <a href="#hero" style="display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.8.8 0 0 1-1.1.3c-2.9-1.8-6.6-2.2-10.9-1.2a.8.8 0 1 1-.3-1.5c4.7-1.1 8.8-.6 12 1.4.4.2.5.7.3 1zm1.2-2.8a1 1 0 0 1-1.3.3c-3.3-2-8.4-2.6-12.3-1.4a1 1 0 0 1-.6-1.9c4.5-1.3 10-.7 13.8 1.6.4.3.6.9.4 1.4zm.1-2.9C14.2 8.4 8 8.2 4.6 9.3a1.2 1.2 0 1 1-.7-2.3C7.9 5.8 14.7 6 19 8.6a1.2 1.2 0 0 1-1.1 2.1z"></path></svg></a>
+<footer style="border-top:1px solid var(--border);padding:clamp(24px,3vw,32px) clamp(20px,5vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:clamp(20px,3vw,32px);align-items:start">
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <img src="./assets/reced-logo-lado-trim.png" alt="RECED Produções" style="height:32px;width:auto;display:block;align-self:flex-start">
+    <div style="font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2);line-height:1.7">Música · Vídeo · Experiências<br>A fé em movimento.</div>
+    <div style="display:flex;gap:8px">
+      <a href="https://www.youtube.com/channel/UCdA_q51T2DGOSemT7l9LWPQ?sub_confirmation=1" target="_blank" rel="noopener" style="display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.8-.5-5.6a2.9 2.9 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.4a2.9 2.9 0 0 0-2 2C1 8.2 1 12 1 12s0 3.8.5 5.6a2.9 2.9 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.4a2.9 2.9 0 0 0 2-2C23 15.8 23 12 23 12zM9.8 15.4V8.6l5.9 3.4z"></path></svg></a>
+      <a href="https://www.instagram.com/recedproducoes/" target="_blank" rel="noopener" style="display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"></circle></svg></a>
+      <a href="https://www.facebook.com/861335663725649" target="_blank" rel="noopener" style="display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8.3h2.8l.4-3.2h-3.2V7.4c0-.9.3-1.6 1.6-1.6h1.7V2.9C16.5 2.9 15.4 2.8 14.2 2.8c-2.6 0-4.4 1.6-4.4 4.5v2.2H7v3.2h2.8V21h3.7z"></path></svg></a>
+      <a href="#hero" style="display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)" style-hover="border-color:var(--accent);color:var(--accent)"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.8.8 0 0 1-1.1.3c-2.9-1.8-6.6-2.2-10.9-1.2a.8.8 0 1 1-.3-1.5c4.7-1.1 8.8-.6 12 1.4.4.2.5.7.3 1zm1.2-2.8a1 1 0 0 1-1.3.3c-3.3-2-8.4-2.6-12.3-1.4a1 1 0 0 1-.6-1.9c4.5-1.3 10-.7 13.8 1.6.4.3.6.9.4 1.4zm.1-2.9C14.2 8.4 8 8.2 4.6 9.3a1.2 1.2 0 1 1-.7-2.3C7.9 5.8 14.7 6 19 8.6a1.2 1.2 0 0 1-1.1 2.1z"></path></svg></a>
     </div>
   </div>
-  <nav style="display:flex;flex-direction:column;gap:12px">
-    <a href="#hero" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Início</a>
-    <a href="#sobre" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Sobre</a>
-    <a href="#servicos" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Serviços</a>
-    <a href="./portfolio.html" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Portfólio</a>
-    <a href="#contato" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Contato</a>
+  <nav style="display:flex;flex-direction:column;gap:7px">
+    <a href="#hero" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Início</a>
+    <a href="#sobre" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Sobre</a>
+    <a href="#servicos" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Serviços</a>
+    <a href="./portfolio.html" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Portfólio</a>
+    <a href="https://wa.me/5541997224176?text=Ol%C3%A1%2C%20gostaria%20de%20entender%20melhor%20sobre%20a%20RECED" target="_blank" rel="noopener" style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2)" style-hover="color:var(--accent)">Contato</a>
   </nav>
-  <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
-    <div class="reced-hesed-mark" tabindex="0" data-hesed-meaning="Do hebraico ḥesed: o amor leal, constante e misericordioso de Deus." style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:2.2rem;color:var(--accent);line-height:1">Hesed</div>
-    <div style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);line-height:2">Amor leal.<br>Sempre.</div>
-    <div style="margin-top:18px;font-size:10.5px;line-height:1.8;color:var(--text-2)">© 2025 RECED Produções.<br>Todos os direitos reservados.</div>
+  <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+    <div class="reced-hesed-mark" tabindex="0" data-hesed-meaning="Do hebraico ḥesed: o amor leal, constante e misericordioso de Deus." style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.5rem;color:var(--accent);line-height:1">Hesed</div>
+    <div style="font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--text-2);line-height:1.7">Amor leal. Sempre.</div>
+    <div style="margin-top:8px;font-size:10px;line-height:1.6;color:var(--text-2)">© 2025 RECED Produções. Todos os direitos reservados.</div>
   </div>
 </footer>
 
@@ -404,7 +417,6 @@ class Component extends DCLogic {
   // literal-placeholder rendering for an empty list (unresolved "{{ }}" markup
   // briefly visible to real visitors). Supabase overwrites this once it loads.
   state = {
-    cat: 'Todos',
     portfolioItems: [
       { title:'Quão Grande é Ele', kind:'Cover', cat:'Música', imageUrl:'', placeholder:'Quão Grande é Ele', href:'#portfolio', target:'_self', rel:'' },
       { title:'Lugar Secreto', kind:'Autoral', cat:'Música', imageUrl:'', placeholder:'Lugar Secreto', href:'#portfolio', target:'_self', rel:'' },
@@ -429,6 +441,12 @@ class Component extends DCLogic {
 
   CAT_LABELS = { musica: 'Música', eventos: 'Eventos', institucional: 'Institucional' };
 
+  youtubeId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+
   componentDidMount() {
     this.applyTheme();
     this.loadContent();
@@ -446,16 +464,23 @@ class Component extends DCLogic {
       client.from('testimonials').select('*').order('sort_order')
     ]);
 
-    const portfolioItems = (items || []).map(it => ({
-      title: it.title,
-      kind: it.kind,
-      cat: this.CAT_LABELS[it.category] || it.category,
-      imageUrl: it.image_path ? bucket.getPublicUrl(it.image_path).data.publicUrl : '',
-      placeholder: it.title,
-      href: it.youtube_url || '#portfolio',
-      target: it.youtube_url ? '_blank' : '_self',
-      rel: it.youtube_url ? 'noopener' : ''
-    }));
+    const portfolioItems = (items || []).map(it => {
+      const vid = this.youtubeId(it.youtube_url);
+      const imageUrl = it.image_path
+        ? bucket.getPublicUrl(it.image_path).data.publicUrl
+        : (vid ? `https://img.youtube.com/vi/${vid}/mqdefault.jpg` : '');
+      return {
+        title: it.title,
+        kind: it.kind,
+        cat: this.CAT_LABELS[it.category] || it.category,
+        imageUrl,
+        placeholder: it.title,
+        href: it.youtube_url || '#portfolio',
+        target: it.youtube_url ? '_blank' : '_self',
+        rel: it.youtube_url ? 'noopener' : '',
+        videoId: vid || ''
+      };
+    });
 
     const testimonialsOut = (testimonials || []).map(t => ({
       quote: t.quote,
@@ -482,21 +507,11 @@ class Component extends DCLogic {
   }
 
   renderVals() {
-    const cat = this.state.cat;
-    const filters = ['Todos', 'Música', 'Eventos', 'Institucional'].map(label => {
-      const on = label === cat;
-      return {
-        label,
-        bg: on ? 'var(--accent)' : 'transparent',
-        fg: on ? 'var(--bg)' : 'var(--text-2)',
-        bd: on ? 'var(--accent)' : 'var(--border)',
-        select: () => this.setState({ cat: label })
-      };
-    });
-    const allItems = this.state.portfolioItems;
     return {
-      filters,
-      items: cat === 'Todos' ? allItems : allItems.filter(i => i.cat === cat),
+      // Home is a teaser: only the first 3 items, in the order set in
+      // /admin (sort_order). Browsing everything, with category filters,
+      // happens on portfolio.html.
+      items: this.state.portfolioItems.slice(0, 3),
       testimonials: this.state.testimonials,
       showProvaSocial: this.props.showProvaSocial !== false
     };
@@ -615,6 +630,150 @@ class Component extends DCLogic {
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   update();
+})();
+</script>
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var FRAME_COUNT = 70;
+  var frames = [];
+  for (var i = 1; i <= FRAME_COUNT; i++) {
+    var n = i < 10 ? '0' + i : '' + i;
+    var img = new Image();
+    img.src = './assets/hero-orbit/frame-' + n + '.jpg';
+    frames.push(img.src);
+  }
+
+  var ticking = false;
+  var lastBase = -1, lastNext = -1;
+
+  function update(){
+    var pin = document.querySelector('.reced-hero-pin');
+    var a = document.getElementById('reced-hero-scrub');
+    var b = document.getElementById('reced-hero-scrub-next');
+    if (!pin || !a || !b) return;
+    var rect = pin.getBoundingClientRect();
+    var scrollable = rect.height - window.innerHeight;
+    if (scrollable <= 0) return;
+    var progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+    // Continuous position along the frame strip (0..FRAME_COUNT-1), not a
+    // rounded step: the two layers hold the frame below and above this
+    // position, and their opacity is the exact fractional blend between
+    // them — so the crossfade tracks the scrollbar 1:1 instead of playing
+    // a fixed-duration transition after a discrete jump.
+    var pos = progress * (FRAME_COUNT - 1);
+    var base = Math.floor(pos);
+    var rawFrac = pos - base;
+    // Two consecutive orbit frames blended across the FULL gap between them
+    // reads as a muddy double-exposure (different camera angles overlapping
+    // for too long). Dose it down to a brief dissolve right at the cut —
+    // each frame stays crisp and solid outside that narrow window.
+    var BLEND_WINDOW = 0.28;
+    var frac = Math.max(0, Math.min(1, (rawFrac - (0.5 - BLEND_WINDOW / 2)) / BLEND_WINDOW));
+    var next = Math.min(FRAME_COUNT - 1, base + 1);
+    if (base !== lastBase) { a.src = frames[base]; lastBase = base; }
+    if (next !== lastNext) { b.src = frames[next]; lastNext = next; }
+    a.style.opacity = String(1 - frac);
+    b.style.opacity = String(frac);
+  }
+
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ update(); ticking = false; });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
+
+  // requestAnimationFrame can stay idle in some preview/automation contexts —
+  // a plain interval keeps the scrub responsive everywhere; each call is a
+  // handful of property reads/writes, cheap even at this cadence.
+  setInterval(update, 150);
+})();
+</script>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Fechar vídeo">✕</button>
+    <div id="lightbox-frame-wrap"></div>
+  </div>
+</div>
+<script>
+(function(){
+  // Same FLIP-to-fullscreen effect as portfolio.html: the lightbox is born at
+  // the clicked tile's exact position/size and grows into place, reversing
+  // back into the tile on close. Delegated on document (not bound per-tile)
+  // because this page's component runtime re-renders the portfolio tiles
+  // after this script's first pass, which would orphan direct listeners.
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FLIP_DURATION = 380;
+  var FLIP_EASING = 'cubic-bezier(.16,1,.3,1)';
+  var lastOriginRect = null;
+  var currentFlipAnim = null;
+
+  function flipTransform(originRect, finalRect){
+    var scaleX = originRect.width / finalRect.width;
+    var scaleY = originRect.height / finalRect.height;
+    var dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
+    var dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
+    return 'translate(' + dx + 'px,' + dy + 'px) scale(' + scaleX + ',' + scaleY + ')';
+  }
+
+  function openLightbox(videoId, originEl){
+    var lb = document.getElementById('lightbox');
+    var inner = lb.querySelector('.lightbox-inner');
+    var wrap = document.getElementById('lightbox-frame-wrap');
+    wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1" title="Vídeo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    if (currentFlipAnim) currentFlipAnim.cancel();
+    if (reducedMotion || !originEl || !inner.animate) { lastOriginRect = null; return; }
+
+    lastOriginRect = originEl.getBoundingClientRect();
+    var finalRect = inner.getBoundingClientRect();
+    currentFlipAnim = inner.animate(
+      [{ transform: flipTransform(lastOriginRect, finalRect) }, { transform: 'none' }],
+      { duration: FLIP_DURATION, easing: FLIP_EASING, fill: 'forwards' }
+    );
+  }
+
+  function closeLightbox(){
+    var lb = document.getElementById('lightbox');
+    var inner = lb.querySelector('.lightbox-inner');
+
+    function finish(){
+      document.getElementById('lightbox-frame-wrap').innerHTML = '';
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (currentFlipAnim) currentFlipAnim.cancel();
+    if (reducedMotion || !lastOriginRect || !inner.animate) { finish(); return; }
+
+    var finalRect = inner.getBoundingClientRect();
+    currentFlipAnim = inner.animate(
+      [{ transform: 'none' }, { transform: flipTransform(lastOriginRect, finalRect) }],
+      { duration: FLIP_DURATION, easing: FLIP_EASING, fill: 'forwards' }
+    );
+    currentFlipAnim.finished.then(finish, function(){});
+  }
+
+  document.addEventListener('click', function(e){
+    var tile = e.target.closest && e.target.closest('.reced-tile[data-video-id]');
+    if (tile && tile.getAttribute('data-video-id')) {
+      e.preventDefault();
+      openLightbox(tile.getAttribute('data-video-id'), tile);
+      return;
+    }
+    if (e.target.id === 'lightbox-close' || e.target.id === 'lightbox') closeLightbox();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeLightbox();
+  });
 })();
 </script>
 </body>
